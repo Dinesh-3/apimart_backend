@@ -2,7 +2,7 @@ package com.codingmart.api_mart.utils;
 
 public class ResponseBody {
     private boolean status = true;
-    private short status_code = 200;
+    private int status_code = 200;
     private String message = "Success";
     private Object data;
 
@@ -14,7 +14,7 @@ public class ResponseBody {
         this.data = data;
     }
 
-    public ResponseBody(boolean status, short status_code, String message, Object data) {
+    public ResponseBody(boolean status, int status_code, String message, Object data) {
         this.status = status;
         this.status_code = status_code;
         this.message = message;
@@ -25,7 +25,7 @@ public class ResponseBody {
         return status;
     }
 
-    public short getStatus_code() {
+    public int getStatus_code() {
         return status_code;
     }
 

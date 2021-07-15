@@ -1,3 +1,4 @@
+
 package com.codingmart.api_mart.service;
 
 import com.codingmart.api_mart.model.User;
@@ -23,9 +24,9 @@ public class UserAuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("email = " + email);
+//        System.out.println("email = " + email);
         User user = userRepository.findByEmail(email);
-        System.out.println("user = " + user.getEmail());
+//        System.out.println("user = " + user.getEmail());
         if (user == null) {
             throw new UsernameNotFoundException("Email " + email + " not found");
         }

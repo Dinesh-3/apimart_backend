@@ -1,39 +1,55 @@
 package com.codingmart.api_mart.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 
-@Document
 public class User {
-    @Id
     private String id;
     private String name;
     private String email;
     private String password;
-    private LocalDateTime created_at = LocalDateTime.now();
+    private String created_at = LocalDateTime.now().toString();
 
     public User() {
         super();
     }
 
-    public User(String name, String email) {
-        super();
+    public User(String id, String name, String email, String password) {
+        System.out.println("created_at = " + created_at);
+        this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
+    }
+
+    public User(String id, String name, String email, String password, String created_at) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
 
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name.replace(" ", "").toLowerCase();
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -44,11 +60,11 @@ public class User {
         this.password = password;
     }
 
-    public LocalDateTime getCreated_at() {
+    public String getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
+    public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
 }

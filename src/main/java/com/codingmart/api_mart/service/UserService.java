@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.codingmart.api_mart.utils.ResponseBody;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -25,26 +26,35 @@ public class UserService {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    public ResponseBody getAllUser() {
+        List<User> users = userRepository.getAll();
+        ResponseBody responseBody = getResponseBody("Success", users);
+        return responseBody;
+    }
+
     public ResponseBody getUserById(long id) {
 
         return new ResponseBody("","");
     }
 
     public ResponseBody signup(User user) {
-//        User existData = userRepository.findBy(user.getEmail());
-//        if (existData != null) {
-//            return new ResponseEntity<>(returnJsonString(false, "Email already exist please try with new mail"),
-//                    HttpStatus.FORBIDDEN);
-//        } else {
+        boolean isEmailOrNameExists = userRepository.isEmailOrNameExists(user.getName(), user.getEmail());
+//        boolean isEmailExist = userRepository.findByEmailExists(user.getEmail());
+//        boolean isNameExist = userRepository.findByNameExists(user.getName());
+//
+        if( isEmailOrNameExists ) return new ResponseBody(false, (short) 400,  "Email or Name Already Exist", null);
+
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        userRepository.save(user);
-        return new ResponseBody("Signup Success", null);
-//    }
+
+        boolean savedUser = userRepository.save(user);
+        return new ResponseBody("Success", savedUser);
     }
+
 
     public ResponseBody login(User user) {
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+        if(userRepository.findByEmail(user.getEmail()) == null) return getResponseBody(false, 400,"User Doesn't Exist", null);
         User savedUser = userRepository.findByEmail(user.getEmail());
         HashMap body = getHashMap();
         body.put("token", tokenProvider.createToken(user.getName(), user.getEmail()));
@@ -61,12 +71,22 @@ public class UserService {
         return new ResponseBody("","");
     }
 
+    public ResponseBody test() {
+        boolean result = userRepository.isEmailOrNameExists("Test", "asasdfk@gmail.com");
+        return getResponseBody("Success", result);
+    }
+
     private ResponseBody getResponseBody(String message, Object data){
         return new ResponseBody(message, data);
+    }
+
+    private ResponseBody getResponseBody(boolean status, int status_code, String message, Object data){
+        return new ResponseBody(status, status_code, message, data);
     }
 
     @Bean
     private HashMap<String, Object> getHashMap() {
         return new HashMap<>();
     }
+
 }

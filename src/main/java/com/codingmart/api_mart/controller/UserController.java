@@ -13,11 +13,21 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/{id}")
-    public ResponseBody getUser(@PathVariable long id){
-        return userService.getUserById(id);
+    @GetMapping("/test")
+    public ResponseBody test() {
+        return userService.test();
     }
 
+    @GetMapping("/all")
+    public ResponseBody getAllUser(){
+        return userService.getAllUser();
+    }
+
+//    @GetMapping("/{id}")
+//    public ResponseBody getUser(@PathVariable long id){
+//        return userService.getUserById(id);
+//    }
+//
     @PostMapping("/signup")
     public ResponseBody createUser(@RequestBody User user){
         return userService.signup(user);
@@ -27,14 +37,14 @@ public class UserController {
     public ResponseBody loginUser(@RequestBody User user){
         return userService.login(user);
     }
-
-    @PutMapping("/{id}")
-    public ResponseBody updateUser(@PathVariable long id, @RequestBody User user){
-        return userService.updateUser(user);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseBody deleteUser(@PathVariable long id){
-        return userService.deleteUser(id);
-    }
+//
+//    @PutMapping("/{id}")
+//    public ResponseBody updateUser(@PathVariable long id, @RequestBody User user){
+//        return userService.updateUser(user);
+//    }
+//
+//    @DeleteMapping("/{id}")
+//    public ResponseBody deleteUser(@PathVariable long id){
+//        return userService.deleteUser(id);
+//    }
 }
