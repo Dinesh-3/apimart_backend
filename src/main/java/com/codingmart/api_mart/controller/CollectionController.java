@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -32,8 +33,9 @@ public class CollectionController {
     }
 
     @GetMapping("/{user}/{fileName}")
-    public ResponseBody getCollectionByUser(@PathVariable String user, @PathVariable String fileName ) {
-        return collectionService.getCollectionByUser(user, fileName);
+    public ResponseBody getCollectionByUser(@PathVariable String user, @PathVariable String fileName, @RequestParam Map<String,String> queryParams ) {
+        System.out.println("queryParams = " + queryParams);
+        return collectionService.getCollectionByUser(user, fileName, queryParams);
     }
 
 
