@@ -42,16 +42,14 @@ public class UserService {
     }
 
     public ResponseBody signup(User user) {
-        boolean isEmailOrNameExists = userRepository.isEmailOrNameExists(user.getName(), user.getEmail());
-//        boolean isEmailExist = userRepository.findByEmailExists(user.getEmail());
-//        boolean isNameExist = userRepository.findByNameExists(user.getName());
+//        boolean isEmailOrNameExists = userRepository.isEmailOrNameExists(user.getName(), user.getEmail());
 //
-        if( isEmailOrNameExists ) return new ResponseBody(false, 400,  "Email or Name Already Exist", null);
-
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-
-        boolean savedUser = userRepository.save(user);
-        return new ResponseBody("Success", savedUser);
+//        if( isEmailOrNameExists ) return new ResponseBody(false, 400,  "Email or Name Already Exist", null);
+//
+//        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+//
+//        boolean savedUser = userRepository.save(user);
+        return new ResponseBody("Success", null);
     }
 
 

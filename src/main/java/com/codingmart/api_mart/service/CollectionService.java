@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -91,6 +93,9 @@ public class CollectionService {
             boolean isSaved = collectionRepository.saveCollection(collectionName, records);
             if(isSaved) {
                 userTableRepository.save(new Table(username, fileName, collectionName));
+                String userDirectory = Paths.get("").toAbsolutePath().toString();
+                System.out.println("userDirectory = " + userDirectory+filePath);
+                Files.deleteIfExists(Paths.get(userDirectory + "/" + filePath));
                 return getResponseBody("Success Data Saved", null);
             }
             System.out.println(records);

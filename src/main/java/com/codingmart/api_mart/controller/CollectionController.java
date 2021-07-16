@@ -22,6 +22,11 @@ public class CollectionController {
     @Autowired
     private CollectionService collectionService;
 
+    @PostMapping("/upload/mocky")
+    public String uploadMocky() {
+        return "Success";
+    }
+
     @PostMapping("/upload")
     public ResponseBody uploadCollection(@RequestParam("File") MultipartFile file, HttpServletRequest request) {
         return collectionService.uploadCollection(file, request);
@@ -34,7 +39,6 @@ public class CollectionController {
 
     @GetMapping("/{user}/{fileName}")
     public ResponseBody getCollectionByUser(@PathVariable String user, @PathVariable String fileName, @RequestParam Map<String,String> queryParams ) {
-        System.out.println("queryParams = " + queryParams);
         return collectionService.getCollectionByUser(user, fileName, queryParams);
     }
 

@@ -16,14 +16,14 @@ public class User {
     public User(String id, String name, String email, String password) {
         System.out.println("created_at = " + created_at);
         this.id = id;
-        this.name = name;
+        this.name = name.toLowerCase();
         this.email = email;
         this.password = password;
     }
 
     public User(String id, String name, String email, String password, String created_at) {
         this.id = id;
-        this.name = name;
+        this.name = name.toLowerCase();
         this.email = email;
         this.password = password;
     }
