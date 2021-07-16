@@ -6,6 +6,8 @@ import com.codingmart.api_mart.utils.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/user")
@@ -23,11 +25,11 @@ public class UserController {
         return userService.getAllUser();
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseBody getUser(@PathVariable long id){
-//        return userService.getUserById(id);
-//    }
-//
+    @GetMapping("/get")
+    public ResponseBody getUser(HttpServletRequest request){
+        return userService.getUserById(request);
+    }
+
     @PostMapping("/signup")
     public ResponseBody createUser(@RequestBody User user){
         return userService.signup(user);

@@ -3,6 +3,7 @@ package com.codingmart.api_mart.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @RestController
-
+@CrossOrigin
 public class FileUploadController {
     @Value("$(file.upload-dir)")
     String FILE_DIRECTORY;

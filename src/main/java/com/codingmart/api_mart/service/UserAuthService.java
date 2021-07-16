@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class UserAuthService implements UserDetailsService {
@@ -23,12 +22,12 @@ public class UserAuthService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 //        System.out.println("email = " + email);
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByName(name);
 //        System.out.println("user = " + user.getEmail());
         if (user == null) {
-            throw new UsernameNotFoundException("Email " + email + " not found");
+            throw new UsernameNotFoundException("Username " + name + " not found");
         }
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>()
         );
