@@ -10,7 +10,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.stereotype.Repository;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +29,13 @@ public class UserRepository {
     }
 
     public User findByEmail(String email) {
+
         Bson filter = Filters.eq("email", email);
-        FindIterable<Document> users = collection.find(filter);
-        System.out.println("users = " + users.toString());
-        for(Document item: users) {
-            User findUser = new User(item.get("_id").toString(), item.getString("name"), item.getString("email"), item.getString("password"), item.get("created_at").toString());
-            return findUser;
-        }
-        return null;
-//        return new User("60ef23406d2dd577168dffeb", "Test", "test@gmail.com", "$2a$10$akNyrwr72B5x.mXm8JE1puE/Bels6xEhGPvIuxPIPxPBYvn8.uv4K", "2021-07-14T17:47:44.731+00:00");
+        Document user = collection.find(filter).first();
+
+        User findUser = new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString());
+
+        return findUser;
     }
 
     public User findByName(String name) {
@@ -70,24 +67,13 @@ public class UserRepository {
         for (Document user: users) {
             return true;
         }
-
         return false;
-//
-//        BasicDBObject filterByName = new BasicDBObject("name", name);
-//        BasicDBObject filterByEmail = new BasicDBObject("name", name);
-//        System.out.println("filterByEmail = " + filterByEmail);
-//        System.out.println("filterByEmail.toString() = " + filterByEmail.toString());
-//        if( filterByEmail.isEmpty() && filterByName.isEmpty() ) return false;
-//        return true;
     }
 
     public User findById(String id) {
         Bson filters = Filters.eq("_id", id);
-        FindIterable<Document> users = collection.find(filters);
-        for (Document item:users) {
-            User findUser = new User(item.get("_id").toString(), item.getString("name"), item.getString("email"), item.getString("password"), item.get("created_at").toString());
-            return findUser;
-        }
-        return null;
+        Document user = collection.find(filters).first();
+        User findUser = new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString());
+        return findUser;
     }
 }

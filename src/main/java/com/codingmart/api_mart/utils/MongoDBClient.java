@@ -2,9 +2,8 @@ package com.codingmart.api_mart.utils;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
+import org.springframework.beans.factory.annotation.Value;
 
 public class MongoDBClient {
 

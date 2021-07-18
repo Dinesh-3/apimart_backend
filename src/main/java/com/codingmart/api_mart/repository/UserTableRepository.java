@@ -1,7 +1,6 @@
 package com.codingmart.api_mart.repository;
 
 import com.codingmart.api_mart.model.Table;
-import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.utils.MongoDBClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -54,23 +53,26 @@ public class UserTableRepository {
         Bson filter = Filters.and(Filters.eq("user", user), Filters.eq("collection", table));
         FindIterable<Document> userTables = collection.find(filter);
         for(Document item: userTables) {
-//            Table updatedTable = new Table(item.get("_id").toString(), item.getString("user"), item.getString("collection"), item.get("created_at").toString());
             return true;
         }
         return false;
     }
 
-    public boolean save(Table table) {
+    public Table save(Table table) {
         Document userDocument = new Document();
         userDocument.append("user", table.getUser());
         userDocument.append("fileName", table.getFileName());
         userDocument.append("collection", table.getCollection());
         userDocument.append("created_at", table.getCreated_at());
-        try {
-            collection.insertOne(userDocument);
-            return true;
-        }catch (Exception error) {
-            return false;
-        }
+
+        collection.insertOne(userDocument);
+        return table;
+    }
+
+    public boolean deleteTableByUser(String username, String fileName) {
+        Bson filter = Filters.and(Filters.eq("user", username), Filters.eq("fileName", fileName));
+        collection.deleteOne(filter);
+        mongoDBClient.getCollection(username + fileName).drop();
+        return true;
     }
 }

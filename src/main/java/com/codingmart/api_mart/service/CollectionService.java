@@ -6,21 +6,14 @@ import com.codingmart.api_mart.repository.UserRepository;
 import com.codingmart.api_mart.repository.UserTableRepository;
 import com.codingmart.api_mart.utils.GetTokenPayload;
 import com.codingmart.api_mart.utils.ResponseBody;
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.mongodb.client.FindIterable;
-import io.jsonwebtoken.Jwts;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.*;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,9 +30,6 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class CollectionService {
 
-    @Value("${jwt.secret-key}")
-    private String secretKey;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -51,17 +41,14 @@ public class CollectionService {
 
     public ResponseBody uploadCollection(MultipartFile file, HttpServletRequest request) {
         String fullName = file.getOriginalFilename().replace(" ", "");
-
         String[] splitName = fullName.split("[.]");
         String fileName = splitName[0];
         String fileType = splitName[1];
-        if(fileType.equals("csv") || fileType.equals("xlsx")) System.out.println("fileType = " + fileType);
+        if(fileType.equals("csv") || fileType.equals("xlsx") || fileType.equals("xls")) System.out.println("fileType = " + fileType);
         else return getResponseBody(false, 400, "File Type Not supported", null);
         String token = request.getHeader("Authorization");
         String username = GetTokenPayload.getPayload(token, "sub");
 
-        System.out.println("username = " + username);
-//        String username = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
 
         String filePath = "src/main/resources/uploads/" + fullName;
         File myFile= new File(filePath);
@@ -87,22 +74,26 @@ public class CollectionService {
                 BufferedReader br = new BufferedReader(reader);
                 FileInputStream fileInputStream = new FileInputStream(myFile);
         ) {
-            List<Map<String, String>> records = new ArrayList<>();
-            if (fileType.equals("csv")) records = getHashMapFromCSV(br);
-            if(fileType.equals("xlsx")) records = getHashMapFromXLSX(fileInputStream);
+            List<Map<String, Object>> records = new ArrayList<>();
+            if (fileType.equals("csv")) records = getHashMapFromApacheCSV(reader);
+            if(fileType.equals("xlsx")) records = getHashMapFromXL(new XSSFWorkbook(fileInputStream));
+            if(fileType.equals("xls")) records = getHashMapFromXL(new HSSFWorkbook(fileInputStream));
             boolean isSaved = collectionRepository.saveCollection(collectionName, records);
             if(isSaved) {
-                userTableRepository.save(new Table(username, fileName, collectionName));
-                String userDirectory = Paths.get("").toAbsolutePath().toString();
-                System.out.println("userDirectory = " + userDirectory+filePath);
-                Files.deleteIfExists(Paths.get(userDirectory + "/" + filePath));
-                return getResponseBody("Success Data Saved", null);
+                Table table = userTableRepository.save(new Table(username, fileName, collectionName));
+                return getResponseBody("Success Data Saved", table);
             }
-            System.out.println(records);
             return getResponseBody(false, 400, "Unable to parse " + fileType + " File", null);
         } catch (Exception e) {
             e.printStackTrace();
             return getResponseBody(false, 400, "Error in " + fileType + " file", null);
+        }finally {
+            String userDirectory = Paths.get("").toAbsolutePath().toString();
+            try {
+                Files.deleteIfExists(Paths.get(userDirectory + "/" + filePath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -118,7 +109,7 @@ public class CollectionService {
     }
 
     public ResponseBody getCollectionByUser(String user, String fileName, Map<String,String> queryParams) {
-        String collectionName = (user + fileName).toLowerCase();
+        String collectionName = (user.toLowerCase() + fileName);
         List<HashMap<String, String>> records = null;
         try {
             records = collectionRepository.getRecordsByCollection(collectionName, queryParams);
@@ -130,49 +121,109 @@ public class CollectionService {
         return getResponseBody("Success", records);
     }
 
+    public ResponseBody deleteCollectionByUser(String fileName, HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String username = GetTokenPayload.getPayload(token, "sub");
+
+        userTableRepository.deleteTableByUser(username.toLowerCase(), fileName);
+
+        return getResponseBody("Collection Deleted Successfully", true);
+
+    }
+
     private ResponseBody getResponseBody(String message, Object data){
         return new ResponseBody(message, data);
     }
 
-    private List<Map<String, String>> getHashMapFromCSV(BufferedReader br) throws IOException {
+    private List<Map<String, Object>> getHashMapFromCSV(BufferedReader br) throws IOException {
         String[] headers = br.readLine().split(",");
-        List<Map<String, String>> records =
+        List<Map<String, Object>> records =
                 br.lines().map(s -> s.split(","))
                         .map(t -> IntStream.range(0, t.length)
                                 .boxed()
-                                .collect(toMap(i -> headers[i], i -> t[i])))
+                                .collect(toMap(i -> headers[i], i -> (Object) t[i])))
                         .collect(toList());
         return records;
     }
 
-    private List<Map<String, String>> getHashMapFromXLSX(FileInputStream fileInputStream) throws IOException {
-        Workbook workbook = new XSSFWorkbook(fileInputStream);
+    private List<Map<String, Object>> getHashMapFromApacheCSV(Reader reader) throws IOException {
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
+
+        Iterator<String> csvHeader = records.iterator().next().iterator();
+        List<String> headers = new ArrayList<>();
+        while (csvHeader.hasNext()) {
+            String value = csvHeader.next();
+            headers.add(value);
+        }
+        System.out.println("headers = " + headers);
+
+        List<Map<String, Object>> listOfRecords = new ArrayList<>();
+
+        for (CSVRecord record : records) {
+            Iterator<String> recordIterable = record.iterator();
+            Map<String, Object> rowMap = new HashMap<>();
+            int index = 0;
+            while (recordIterable.hasNext()) {
+                String value = recordIterable.next();
+                rowMap.put(headers.get(index), value);
+                ++ index;
+            }
+            listOfRecords.add(rowMap);
+        }
+        return listOfRecords;
+    }
+
+
+    private List<Map<String, Object>> getHashMapFromXL(Workbook workbook) throws IOException {
         Sheet sheet = workbook.getSheetAt(0);
         int lastRowNum = sheet.getLastRowNum();
         Row header = sheet.getRow(0);
-        List<Map<String, String>> records = new ArrayList<>();
+        List<Map<String, Object>> records = new ArrayList<>();
 
         for (int rowIndex = 1; rowIndex <= lastRowNum; rowIndex++) {
             Row currentRow = sheet.getRow(rowIndex);
             Iterator<Cell> cellIterator = currentRow.cellIterator();
-            Map<String, String> rowMap = new HashMap<>();
+            Map<String, Object> rowMap = new HashMap<>();
             while (cellIterator.hasNext()){
                 Cell cell = cellIterator.next();
                 int cellIndex = cell.getColumnIndex();
-                cell.setCellType(CellType.STRING);
+                Object value;
+                switch (cell.getCellType()) {
+                    case BOOLEAN:
+                        value = cell.getBooleanCellValue();
+                        break;
+                    case STRING:
+                        value = cell.getRichStringCellValue().getString();
+                        break;
+                    case NUMERIC:
+                        if (DateUtil.isCellDateFormatted(cell)) {
+                            value = cell.getDateCellValue();
+                        } else {
+                            value = cell.getNumericCellValue();
+                        }
+                        break;
+                    case FORMULA:
+                        value = cell.getCellFormula();
+                        break;
+                    case BLANK:
+                        value = "";
+                        break;
+                    default:
+                        value = "";
+                }
                 String key = header.getCell(cellIndex).getStringCellValue();
-                String value = cell.getStringCellValue();
+
                 rowMap.put(key,value);
             }
-//            System.out.println("rowMap = " + rowMap);
             records.add(rowMap);
         }
-
+        workbook.close();
         return records;
     }
 
     private ResponseBody getResponseBody(boolean status, int status_code, String message, Object data){
         return new ResponseBody(status, status_code, message, data);
     }
+
 
 }

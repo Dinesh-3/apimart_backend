@@ -1,18 +1,14 @@
 package com.codingmart.api_mart.repository;
 
-import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.utils.MongoDBClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -26,7 +22,7 @@ import java.util.Map;
 public class CollectionRepository {
     private MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
 
-    public boolean saveCollection(String collectionName, List<Map<String, String>> records) {
+    public boolean saveCollection(String collectionName, List<Map<String, Object>> records) {
         if(collectionName == "user" || collectionName == "table") return false;
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
         List<Document> documents = new ArrayList<>();
