@@ -86,7 +86,7 @@ public class CollectionService {
             return getResponseBody(false, 400, "Unable to parse " + fileType + " File", null);
         } catch (Exception e) {
             e.printStackTrace();
-            return getResponseBody(false, 400, "Error in " + fileType + " file", null);
+            return getResponseBody(false, 400, "Error in " + fileType + " file " + e.getMessage(), null);
         }finally {
             String userDirectory = Paths.get("").toAbsolutePath().toString();
             try {
@@ -187,31 +187,9 @@ public class CollectionService {
             while (cellIterator.hasNext()){
                 Cell cell = cellIterator.next();
                 int cellIndex = cell.getColumnIndex();
-                Object value;
-                switch (cell.getCellType()) {
-                    case BOOLEAN:
-                        value = cell.getBooleanCellValue();
-                        break;
-                    case STRING:
-                        value = cell.getRichStringCellValue().getString();
-                        break;
-                    case NUMERIC:
-                        if (DateUtil.isCellDateFormatted(cell)) {
-                            value = cell.getDateCellValue();
-                        } else {
-                            value = cell.getNumericCellValue();
-                        }
-                        break;
-                    case FORMULA:
-                        value = cell.getCellFormula();
-                        break;
-                    case BLANK:
-                        value = "";
-                        break;
-                    default:
-                        value = "";
-                }
-                String key = header.getCell(cellIndex).getStringCellValue();
+
+                String key = getCellValue(header.getCell(cellIndex)).toString();
+                Object value = getCellValue(cell);
 
                 rowMap.put(key,value);
             }
@@ -219,6 +197,27 @@ public class CollectionService {
         }
         workbook.close();
         return records;
+    }
+
+    private Object getCellValue(Cell cell) {
+        switch (cell.getCellType()) {
+            case BOOLEAN:
+                return cell.getBooleanCellValue();
+            case STRING:
+                return cell.getRichStringCellValue().getString();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue();
+                } else {
+                    return cell.getNumericCellValue();
+                }
+            case FORMULA:
+                return cell.getCellFormula();
+            case BLANK:
+                return "";
+            default:
+                return "";
+        }
     }
 
     private ResponseBody getResponseBody(boolean status, int status_code, String message, Object data){
