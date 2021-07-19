@@ -2,7 +2,6 @@ package com.codingmart.api_mart.controller;
 
 
 import com.codingmart.api_mart.service.DocsService;
-import com.codingmart.api_mart.utils.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +26,8 @@ public class DocsController {
     }
 
     @GetMapping("/postman-collection")
-    public ResponseEntity<Resource> getPostmanCollection(HttpServletRequest request) {
-        return docsService.getPostmanCollection(request);
+    public ResponseEntity<Resource> getPostmanCollection() {
+        return docsService.getPostmanCollection();
     }
 
 }

@@ -31,7 +31,7 @@ import static java.util.stream.Collectors.toMap;
 public class CollectionService {
 
     @Autowired
-    private UserRepository userRepository;
+    private  UserRepository userRepository;
 
     @Autowired
     private CollectionRepository collectionRepository;
@@ -103,8 +103,7 @@ public class CollectionService {
 
         List<Table> tables = userTableRepository.findByUser(username);
 
-        ResponseBody responseBody = getResponseBody("Success", tables);
-        return responseBody;
+        return getResponseBody("Success", tables);
     }
 
     public ResponseBody getCollectionByUser(String user, String fileName, Map<String,String> queryParams) {

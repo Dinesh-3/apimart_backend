@@ -30,8 +30,7 @@ public class UserService {
 
     public ResponseBody getAllUser() {
         List<User> users = userRepository.getAll();
-        ResponseBody responseBody = getResponseBody("Success", users);
-        return responseBody;
+        return getResponseBody("Success", users);
     }
 
     public ResponseBody getUserById(HttpServletRequest request) {
@@ -62,8 +61,7 @@ public class UserService {
         HashMap body = getHashMap();
         body.put("token", tokenProvider.createToken(savedUser.getName(), savedUser.getEmail(), savedUser.getId()));
         body.put("user", savedUser);
-        ResponseBody responseBody = getResponseBody("Login Success", body);
-        return responseBody;
+        return getResponseBody("Login Success", body);
     }
 
     public ResponseBody updateUser(User user) {

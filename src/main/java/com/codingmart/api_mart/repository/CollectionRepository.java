@@ -21,10 +21,10 @@ import java.util.*;
 
 @Repository
 public class CollectionRepository {
-    private MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
+    private final MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
 
     public boolean saveCollection(String collectionName, List<Map<String, Object>> records) {
-        if(collectionName == "user" || collectionName == "table") return false;
+        if(collectionName.equals("user") || collectionName.equals("table")) return false;
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
         List<Document> documents = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class CollectionRepository {
     }
 
     public List<HashMap<String, String>> getRecordsByCollection(String collectionName, Map<String,String> queryParams) throws IOException {
-        if(collectionName == "user" || collectionName == "table") return null;
+        if(collectionName.equals("user") || collectionName.equals("table")) return null;
 
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
 
@@ -81,7 +81,7 @@ public class CollectionRepository {
     }
 
     public Map<String, String> insertRecord(String collectionName, Map<String, String> requestBody) {
-        if(collectionName == "user" || collectionName == "table") return null;
+        if(collectionName.equals("user") || collectionName.equals("table")) return null;
 
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
 
@@ -97,7 +97,7 @@ public class CollectionRepository {
 
 
     public Map<String, String> updateRecord(String collectionName, Map<String,String> queryParams, Map<String, String> requestBody) {
-        if(collectionName == "user" || collectionName == "table") return null;
+        if(collectionName.equals("user") || collectionName.equals("table")) return null;
 
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
         if(collection.countDocuments() < 0) return null;
@@ -122,7 +122,7 @@ public class CollectionRepository {
     }
 
     public boolean deleteRecord(String collectionName, Map<String,String> queryParams) {
-        if(collectionName == "user" || collectionName == "table") return false;
+        if(collectionName.equals("user") || collectionName.equals("table")) return false;
 
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
         if(collection.countDocuments() < 0) return false;

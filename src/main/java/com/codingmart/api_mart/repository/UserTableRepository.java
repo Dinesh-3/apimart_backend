@@ -15,8 +15,8 @@ import java.util.List;
 
 @Repository
 public class UserTableRepository {
-    private MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
-    private MongoCollection<Document> collection = mongoDBClient.getCollection("table");
+    private final MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
+    private final MongoCollection<Document> collection = mongoDBClient.getCollection("table");
 
     public List<Table> getAll() {
         List<Table> response = new ArrayList<>();

@@ -16,8 +16,8 @@ import java.util.List;
 @Repository
 public class UserRepository {
 
-    private MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
-    private MongoCollection<Document> collection = mongoDBClient.getCollection("user");
+    private final MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
+    private final MongoCollection<Document> collection = mongoDBClient.getCollection("user");
     public List<User> getAll() {
 
         List<User> response = new ArrayList<>();
@@ -33,16 +33,13 @@ public class UserRepository {
         Bson filter = Filters.eq("email", email);
         Document user = collection.find(filter).first();
 
-        User findUser = new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString());
-
-        return findUser;
+        return new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString());
     }
 
     public User findByName(String name) {
         Bson filter = Filters.eq("name", name);
         Document item = collection.find(filter).first();
-        User findUser = new User(item.get("_id").toString(), item.getString("name"), item.getString("email"), item.getString("password"), item.get("created_at").toString());
-        return findUser;
+        return new User(item.get("_id").toString(), item.getString("name"), item.getString("email"), item.getString("password"), item.get("created_at").toString());
     }
 
     public boolean save(User user) {
@@ -73,7 +70,6 @@ public class UserRepository {
     public User findById(String id) {
         Bson filters = Filters.eq("_id", id);
         Document user = collection.find(filters).first();
-        User findUser = new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString());
-        return findUser;
+        return new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString());
     }
 }

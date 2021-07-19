@@ -1,6 +1,5 @@
 package com.codingmart.api_mart.service;
 
-import com.codingmart.api_mart.utils.ResponseBody;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -40,7 +39,7 @@ public class DocsService {
                 .body(resource);
     }
 
-    public ResponseEntity<Resource> getPostmanCollection(HttpServletRequest request) {
+    public ResponseEntity<Resource> getPostmanCollection() {
         String filePath = "src/main/resources/docs/API_MART_Postman_Collection.json";
         File file = new File(filePath);
 

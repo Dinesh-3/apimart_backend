@@ -32,8 +32,7 @@ public class UserAuthService implements UserDetailsService {
     }
 
     private Collection<GrantedAuthority> getGrantedAuthority(User user) {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        return authorities;
+        return new ArrayList<>();
     }
 
     @Bean
