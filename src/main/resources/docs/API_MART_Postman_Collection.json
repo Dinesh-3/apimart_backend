@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "02ef4674-01b7-4a94-ac81-fc3a6c363cab",
+		"name": "API_MART",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Upload Collection",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaW5lc2giLCJlbWFpbCI6ImRpbmVzaEBnbWFpbC5jb20iLCJpZCI6IjYwZWZlMzliMjg0NDhjNDQ2OTk0NWFlOCIsImlhdCI6MTYyNjM1MzQxMiwiZXhwIjoxNjI2NTY5NDEyfQ.W2dIKqn6crajQmFyW9znhlsCFo8j5DMEyEjMPxNp_zQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "File",
+							"type": "file",
+							"src": "/home/dinesh/Downloads/example2.csv"
+						},
+						{
+							"key": "File",
+							"type": "file",
+							"src": "/home/dinesh/Downloads/employee.xlsx",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/collection/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"collection",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Records",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYWh1bCIsImVtYWlsIjoicmFodWxAZ21haWwuY29tIiwiaWQiOiI2MGYwZjgxZGI3MTgyYTAyODY5ODg1ZTgiLCJpYXQiOjE2MjY0MDUzMzcsImV4cCI6MTYyNjYyMTMzN30.alJ6z8TMcx0zik0izTiIEoHWk5rWkC3naY4mJjQoELg",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"row\": [\n        {\"name\": \"dinesh\", \"email\": \"dinesh@gmail.com\", \"phone\": 123434}\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/collection/get/dinesh/file_example_XLSX_100?query_page=1&query_limit=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"collection",
+						"get",
+						"dinesh",
+						"file_example_XLSX_100"
+					],
+					"query": [
+						{
+							"key": "query_page",
+							"value": "1"
+						},
+						{
+							"key": "query_limit",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pagination",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYWh1bCIsImVtYWlsIjoicmFodWxAZ21haWwuY29tIiwiaWQiOiI2MGYwZjgxZGI3MTgyYTAyODY5ODg1ZTgiLCJpYXQiOjE2MjY0MDUzMzcsImV4cCI6MTYyNjYyMTMzN30.alJ6z8TMcx0zik0izTiIEoHWk5rWkC3naY4mJjQoELg",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"row\": [\n        {\"name\": \"dinesh\", \"email\": \"dinesh@gmail.com\", \"phone\": 123434}\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/collection/get/dinesh/file_example_XLSX_100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"collection",
+						"get",
+						"dinesh",
+						"file_example_XLSX_100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Record",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaW5lc2giLCJlbWFpbCI6ImRpbmVzaEBnbWFpbC5jb20iLCJpZCI6IjYwZWZlMzliMjg0NDhjNDQ2OTk0NWFlOCIsImlhdCI6MTYyNjYyMDIwNywiZXhwIjoxNjI2ODM2MjA3fQ._fXayQZ6R-nFLwt63BenGeNAitVEb4ge1KK6XNsMiGU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"No\": \"57.0\",\n    \"First Name\": \"Etta\",\n    \"Country\": \"India\",\n    \"Gender\": \"Female\",\n    \"Id\": \"3598.0\",\n    \"Last Name\": \"Hurn\",\n    \"Age\": \"56.0\",\n    \"Date\": \"15/10/2017\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/collection/dinesh/file_example_XLSX_100?Last Name=Hurn",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"collection",
+						"dinesh",
+						"file_example_XLSX_100"
+					],
+					"query": [
+						{
+							"key": "Last Name",
+							"value": "Hurn"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert Record",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaW5lc2giLCJlbWFpbCI6ImRpbmVzaEBnbWFpbC5jb20iLCJpZCI6IjYwZWZlMzliMjg0NDhjNDQ2OTk0NWFlOCIsImlhdCI6MTYyNjYyMDIwNywiZXhwIjoxNjI2ODM2MjA3fQ._fXayQZ6R-nFLwt63BenGeNAitVEb4ge1KK6XNsMiGU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"No\": \"101.0\",\n    \"First Name\": \"Dinesh\",\n    \"Country\": \"India\",\n    \"Gender\": \"Male\",\n    \"Id\": \"3598.0\",\n    \"Last Name\": \"I\",\n    \"Age\": \"56.0\",\n    \"Date\": \"15/10/2017\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/collection/dinesh/file_example_XLSX_100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"collection",
+						"dinesh",
+						"file_example_XLSX_100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Record",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaW5lc2giLCJlbWFpbCI6ImRpbmVzaEBnbWFpbC5jb20iLCJpZCI6IjYwZWZlMzliMjg0NDhjNDQ2OTk0NWFlOCIsImlhdCI6MTYyNjYyMDIwNywiZXhwIjoxNjI2ODM2MjA3fQ._fXayQZ6R-nFLwt63BenGeNAitVEb4ge1KK6XNsMiGU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"No\": \"20.0\",\n    \"First Name\": \"Vellingiri\",\n    \"Country\": \"France\",\n    \"Gender\": \"Male\",\n    \"Id\": \"3569.0\",\n    \"Last Name\": \"Strawn\",\n    \"Age\": \"46.0\",\n    \"Date\": \"21/05/2015\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/collection/dinesh/file_example_XLSX_100?Last Name=Hurn",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"collection",
+						"dinesh",
+						"file_example_XLSX_100"
+					],
+					"query": [
+						{
+							"key": "Last Name",
+							"value": "Hurn"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

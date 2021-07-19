@@ -14,7 +14,6 @@ public class User {
     }
 
     public User(String id, String name, String email, String password) {
-        System.out.println("created_at = " + created_at);
         this.id = id;
         this.name = name.toLowerCase();
         this.email = email;

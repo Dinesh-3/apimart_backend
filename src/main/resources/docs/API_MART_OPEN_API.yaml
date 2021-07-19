@@ -1,0 +1,1360 @@
+openapi: 3.1.0
+info:
+  title: API_MART
+  version: '1.0'
+  summary: API_MART
+  description: 'Upload CSV, XL file to get instance CRUD API'
+servers:
+  - url: 'http://localhost:3000'
+    description: development
+  - description: production
+    url: 'https://apimart-api.herokuapp.com/'
+paths:
+  '/api/v1/collection/{userName}/{collectionName}':
+    parameters:
+      - schema:
+          type: string
+        name: userName
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: collectionName
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: postapi-v1-userName-collectionName
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostRecordResponseSchema'
+      description: add new record
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: JWT Token
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  'No': '101.0'
+                  First Name: Dinesh
+                  Country: India
+                  Gender: Male
+                  Id: '3598.0'
+                  Last Name: I
+                  Age: '56.0'
+                  Date: 15/10/2017
+              properties:
+                'No':
+                  type: string
+                  minLength: 1
+                First Name:
+                  type: string
+                  minLength: 1
+                Country:
+                  type: string
+                  minLength: 1
+                Gender:
+                  type: string
+                  minLength: 1
+                Id:
+                  type: string
+                  minLength: 1
+                Last Name:
+                  type: string
+                  minLength: 1
+                Age:
+                  type: string
+                  minLength: 1
+                Date:
+                  type: string
+                  minLength: 1
+                '':
+                  type: string
+              required:
+                - 'No'
+                - First Name
+                - Country
+                - Gender
+                - Id
+                - Last Name
+                - Age
+                - Date
+            examples:
+              example-1:
+                value:
+                  'No': '101.0'
+                  First Name: Dinesh
+                  Country: India
+                  Gender: Male
+                  Id: '3598.0'
+                  Last Name: I
+                  Age: '56.0'
+                  Date: 15/10/2017
+        description: Record Object
+    put:
+      summary: ''
+      operationId: putapi-v1-userName-collectionName
+      responses:
+        '200':
+          description: OK
+      description: Update Record
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: JWT Token
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: '{key}'
+          description: '{value}'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                'No':
+                  type: string
+                  minLength: 1
+                First Name:
+                  type: string
+                  minLength: 1
+                Country:
+                  type: string
+                  minLength: 1
+                Gender:
+                  type: string
+                  minLength: 1
+                Id:
+                  type: string
+                  minLength: 1
+                Last Name:
+                  type: string
+                  minLength: 1
+                Age:
+                  type: string
+                  minLength: 1
+                Date:
+                  type: string
+                  minLength: 1
+              required:
+                - 'No'
+                - First Name
+                - Country
+                - Gender
+                - Id
+                - Last Name
+                - Age
+                - Date
+              x-examples:
+                example-1:
+                  'No': '57.0'
+                  First Name: Etta
+                  Country: India
+                  Gender: Female
+                  Id: '3598.0'
+                  Last Name: Hurn
+                  Age: '56.0'
+                  Date: 15/10/2017
+            examples:
+              example-1:
+                value:
+                  'No': string
+                  First Name: string
+                  Country: string
+                  Gender: string
+                  Id: string
+                  Last Name: string
+                  Age: string
+                  Date: string
+        description: ''
+    delete:
+      summary: ''
+      operationId: deleteapi-v1-userName-collectionName
+      responses:
+        '200':
+          description: OK
+      description: Delete Record
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: '{key}'
+          description: '{value}'
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: JWT Token
+          required: true
+  '/api/v1/collection/get/{userName}/{collectionName}':
+    parameters:
+      - schema:
+          type: string
+        name: userName
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: collectionName
+        in: path
+        required: true
+    get:
+      summary: Get All Records of Given Collection
+      tags: []
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllRecordsSchema'
+              examples:
+                example-1:
+                  value:
+                    status: true
+                    status_code: 200
+                    message: Success
+                    data:
+                      - 'No': '18.0'
+                        First Name: Lauralee
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '6597.0'
+                        _id: 60f2c9d533e9da487f2e77e0
+                        Last Name: Perrine
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '46.0'
+                        First Name: Roma
+                        Country: United States
+                        Gender: Female
+                        Id: '2654.0'
+                        _id: 60f2c9d533e9da487f2e77fc
+                        Last Name: Lafollette
+                        Age: '34.0'
+                        Date: 15/10/2017
+        '404':
+          description: User Not Found
+        '':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+              examples:
+                example-1:
+                  value:
+                    status: true
+                    status_code: 200
+                    message: Success
+                    data:
+                      - 'No': '18.0'
+                        First Name: Lauralee
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '6597.0'
+                        _id: 60f2c9d533e9da487f2e77e0
+                        Last Name: Perrine
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '46.0'
+                        First Name: Roma
+                        Country: United States
+                        Gender: Female
+                        Id: '2654.0'
+                        _id: 60f2c9d533e9da487f2e77fc
+                        Last Name: Lafollette
+                        Age: '34.0'
+                        Date: 15/10/2017
+                      - 'No': '47.0'
+                        First Name: Felisa
+                        Country: United States
+                        Gender: Female
+                        Id: '6525.0'
+                        _id: 60f2c9d533e9da487f2e77fd
+                        Last Name: Cail
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '48.0'
+                        First Name: Demetria
+                        Country: United States
+                        Gender: Female
+                        Id: '3265.0'
+                        _id: 60f2c9d533e9da487f2e77fe
+                        Last Name: Abbey
+                        Age: '32.0'
+                        Date: 21/05/2015
+                      - 'No': '65.0'
+                        First Name: Kina
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '3259.0'
+                        _id: 60f2c9d533e9da487f2e780f
+                        Last Name: Hazelton
+                        Age: '31.0'
+                        Date: 16/08/2016
+                      - 'No': '5.0'
+                        First Name: Nereida
+                        Country: United States
+                        Gender: Female
+                        Id: '2468.0'
+                        _id: 60f2c9d533e9da487f2e77d3
+                        Last Name: Magwood
+                        Age: '58.0'
+                        Date: 16/08/2016
+                      - 'No': '13.0'
+                        First Name: Sherron
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '3256.0'
+                        _id: 60f2c9d533e9da487f2e77db
+                        Last Name: Ascencio
+                        Age: '32.0'
+                        Date: 16/08/2016
+                      - 'No': '23.0'
+                        First Name: Many
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '5489.0'
+                        _id: 60f2c9d533e9da487f2e77e5
+                        Last Name: Cuccia
+                        Age: '46.0'
+                        Date: 21/05/2015
+                      - 'No': '24.0'
+                        First Name: Libbie
+                        Country: France
+                        Gender: Female
+                        Id: '5489.0'
+                        _id: 60f2c9d533e9da487f2e77e6
+                        Last Name: Dalby
+                        Age: '42.0'
+                        Date: 21/05/2015
+                      - 'No': '34.0'
+                        First Name: Judie
+                        Country: France
+                        Gender: Female
+                        Id: '7569.0'
+                        _id: 60f2c9d533e9da487f2e77f0
+                        Last Name: Claywell
+                        Age: '35.0'
+                        Date: 16/08/2016
+                      - 'No': '49.0'
+                        First Name: Jeromy
+                        Country: United States
+                        Gender: Male
+                        Id: '3265.0'
+                        _id: 60f2c9d533e9da487f2e77ff
+                        Last Name: Danz
+                        Age: '39.0'
+                        Date: 15/10/2017
+                      - 'No': '83.0'
+                        First Name: Jona
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '6458.0'
+                        _id: 60f2c9d533e9da487f2e7821
+                        Last Name: Grindle
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '84.0'
+                        First Name: Judie
+                        Country: France
+                        Gender: Female
+                        Id: '7569.0'
+                        _id: 60f2c9d533e9da487f2e7822
+                        Last Name: Claywell
+                        Age: '35.0'
+                        Date: 16/08/2016
+                      - 'No': '29.0'
+                        First Name: Garth
+                        Country: United States
+                        Gender: Male
+                        Id: '3256.0'
+                        _id: 60f2c9d533e9da487f2e77eb
+                        Last Name: Gangi
+                        Age: '41.0'
+                        Date: 16/08/2016
+                      - 'No': '40.0'
+                        First Name: Chase
+                        Country: United States
+                        Gender: Male
+                        Id: '2154.0'
+                        _id: 60f2c9d533e9da487f2e77f6
+                        Last Name: Karner
+                        Age: '37.0'
+                        Date: 15/10/2017
+                      - 'No': '41.0'
+                        First Name: Tommie
+                        Country: United States
+                        Gender: Male
+                        Id: '3265.0'
+                        _id: 60f2c9d533e9da487f2e77f7
+                        Last Name: Underdahl
+                        Age: '26.0'
+                        Date: 16/08/2016
+                      - 'No': '22.0'
+                        First Name: Holly
+                        Country: United States
+                        Gender: Female
+                        Id: '8561.0'
+                        _id: 60f2c9d533e9da487f2e77e4
+                        Last Name: Eudy
+                        Age: '52.0'
+                        Date: 16/08/2016
+                      - 'No': '39.0'
+                        First Name: Shanice
+                        Country: United States
+                        Gender: Female
+                        Id: '2567.0'
+                        _id: 60f2c9d533e9da487f2e77f5
+                        Last Name: Mccrystal
+                        Age: '36.0'
+                        Date: 21/05/2015
+                      - 'No': '63.0'
+                        First Name: Sherron
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '3256.0'
+                        _id: 60f2c9d533e9da487f2e780d
+                        Last Name: Ascencio
+                        Age: '32.0'
+                        Date: 16/08/2016
+                      - 'No': '68.0'
+                        First Name: Lauralee
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '6597.0'
+                        _id: 60f2c9d533e9da487f2e7812
+                        Last Name: Perrine
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '88.0'
+                        First Name: Sau
+                        Country: United States
+                        Gender: Female
+                        Id: '9536.0'
+                        _id: 60f2c9d533e9da487f2e7826
+                        Last Name: Pfau
+                        Age: '25.0'
+                        Date: 21/05/2015
+                      - 'No': '6.0'
+                        First Name: Gaston
+                        Country: United States
+                        Gender: Male
+                        Id: '2554.0'
+                        _id: 60f2c9d533e9da487f2e77d4
+                        Last Name: Brumm
+                        Age: '24.0'
+                        Date: 21/05/2015
+                      - 'No': '45.0'
+                        First Name: Weston
+                        Country: United States
+                        Gender: Male
+                        Id: '6540.0'
+                        _id: 60f2c9d533e9da487f2e77fb
+                        Last Name: Martina
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '50.0'
+                        First Name: Rasheeda
+                        Country: United States
+                        Gender: Female
+                        Id: '6125.0'
+                        _id: 60f2c9d533e9da487f2e7800
+                        Last Name: Alkire
+                        Age: '29.0'
+                        Date: 16/08/2016
+                      - 'No': '67.0'
+                        First Name: Shavon
+                        Country: France
+                        Gender: Female
+                        Id: '3579.0'
+                        _id: 60f2c9d533e9da487f2e7811
+                        Last Name: Benito
+                        Age: '39.0'
+                        Date: 15/10/2017
+                      - 'No': '76.0'
+                        First Name: Marvel
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '5555.0'
+                        _id: 60f2c9d533e9da487f2e781a
+                        Last Name: Hail
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '82.0'
+                        First Name: Stasia
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '7521.0'
+                        _id: 60f2c9d533e9da487f2e7820
+                        Last Name: Becker
+                        Age: '34.0'
+                        Date: 16/08/2016
+                      - 'No': '91.0'
+                        First Name: Tommie
+                        Country: United States
+                        Gender: Male
+                        Id: '3265.0'
+                        _id: 60f2c9d533e9da487f2e7829
+                        Last Name: Underdahl
+                        Age: '26.0'
+                        Date: 16/08/2016
+                      - 'No': '95.0'
+                        First Name: Weston
+                        Country: United States
+                        Gender: Male
+                        Id: '6540.0'
+                        _id: 60f2c9d533e9da487f2e782d
+                        Last Name: Martina
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '12.0'
+                        First Name: Franklyn
+                        Country: France
+                        Gender: Male
+                        Id: '2579.0'
+                        _id: 60f2c9d533e9da487f2e77da
+                        Last Name: Unknow
+                        Age: '38.0'
+                        Date: 15/10/2017
+                      - 'No': '15.0'
+                        First Name: Kina
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '3259.0'
+                        _id: 60f2c9d533e9da487f2e77dd
+                        Last Name: Hazelton
+                        Age: '31.0'
+                        Date: 16/08/2016
+                      - 'No': '60.0'
+                        First Name: Fallon
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '5486.0'
+                        _id: 60f2c9d533e9da487f2e780a
+                        Last Name: Winward
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '87.0'
+                        First Name: Kelsie
+                        Country: France
+                        Gender: Female
+                        Id: '8642.0'
+                        _id: 60f2c9d533e9da487f2e7825
+                        Last Name: Wachtel
+                        Age: '27.0'
+                        Date: 16/08/2016
+                      - 'No': '16.0'
+                        First Name: Shavonne
+                        Country: France
+                        Gender: Female
+                        Id: '1546.0'
+                        _id: 60f2c9d533e9da487f2e77de
+                        Last Name: Pia
+                        Age: '24.0'
+                        Date: 21/05/2015
+                      - 'No': '52.0'
+                        First Name: Mara
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '1582.0'
+                        _id: 60f2c9d533e9da487f2e7802
+                        Last Name: Hashimoto
+                        Age: '25.0'
+                        Date: 16/08/2016
+                      - 'No': '59.0'
+                        First Name: Vincenza
+                        Country: United States
+                        Gender: Female
+                        Id: '6548.0'
+                        _id: 60f2c9d533e9da487f2e7809
+                        Last Name: Weiland
+                        Age: '40.0'
+                        Date: 21/05/2015
+                      - 'No': '81.0'
+                        First Name: Veta
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '4569.0'
+                        _id: 60f2c9d533e9da487f2e781f
+                        Last Name: Muntz
+                        Age: '37.0'
+                        Date: 15/10/2017
+                      - 'No': '8.0'
+                        First Name: Earlean
+                        Country: United States
+                        Gender: Female
+                        Id: '2456.0'
+                        _id: 60f2c9d533e9da487f2e77d6
+                        Last Name: Melgar
+                        Age: '27.0'
+                        Date: 16/08/2016
+                      - 'No': '27.0'
+                        First Name: Angelyn
+                        Country: United States
+                        Gender: Female
+                        Id: '6125.0'
+                        _id: 60f2c9d533e9da487f2e77e9
+                        Last Name: Vong
+                        Age: '29.0'
+                        Date: 21/05/2015
+                      - 'No': '38.0'
+                        First Name: Sau
+                        Country: United States
+                        Gender: Female
+                        Id: '9536.0'
+                        _id: 60f2c9d533e9da487f2e77f4
+                        Last Name: Pfau
+                        Age: '25.0'
+                        Date: 21/05/2015
+                      - 'No': '51.0'
+                        First Name: Dulce
+                        Country: United States
+                        Gender: Female
+                        Id: '1562.0'
+                        _id: 60f2c9d533e9da487f2e7801
+                        Last Name: Abril
+                        Age: '32.0'
+                        Date: 15/10/2017
+                      - 'No': '61.0'
+                        First Name: Arcelia
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '1258.0'
+                        _id: 60f2c9d533e9da487f2e780b
+                        Last Name: Bouska
+                        Age: '39.0'
+                        Date: 21/05/2015
+                      - 'No': '71.0'
+                        First Name: Belinda
+                        Country: United States
+                        Gender: Female
+                        Id: '2564.0'
+                        _id: 60f2c9d533e9da487f2e7815
+                        Last Name: Partain
+                        Age: '37.0'
+                        Date: 15/10/2017
+                      - 'No': '79.0'
+                        First Name: Garth
+                        Country: United States
+                        Gender: Male
+                        Id: '3256.0'
+                        _id: 60f2c9d533e9da487f2e781d
+                        Last Name: Gangi
+                        Age: '41.0'
+                        Date: 16/08/2016
+                      - 'No': '80.0'
+                        First Name: Carla
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '3264.0'
+                        _id: 60f2c9d533e9da487f2e781e
+                        Last Name: Trumbull
+                        Age: '28.0'
+                        Date: 21/05/2015
+                      - 'No': '100.0'
+                        First Name: Rasheeda
+                        Country: United States
+                        Gender: Female
+                        Id: '6125.0'
+                        _id: 60f2c9d533e9da487f2e7832
+                        Last Name: Alkire
+                        Age: '29.0'
+                        Date: 16/08/2016
+                      - 'No': '4.0'
+                        First Name: Kathleen
+                        Country: United States
+                        Gender: Female
+                        Id: '3549.0'
+                        _id: 60f2c9d533e9da487f2e77d2
+                        Last Name: Hanner
+                        Age: '25.0'
+                        Date: 15/10/2017
+                      - 'No': '11.0'
+                        First Name: Arcelia
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '1258.0'
+                        _id: 60f2c9d533e9da487f2e77d9
+                        Last Name: Bouska
+                        Age: '39.0'
+                        Date: 21/05/2015
+                      - 'No': '64.0'
+                        First Name: Marcel
+                        Country: Great Britain
+                        Gender: Male
+                        Id: '2587.0'
+                        _id: 60f2c9d533e9da487f2e780e
+                        Last Name: Zabriskie
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '66.0'
+                        First Name: Shavonne
+                        Country: France
+                        Gender: Female
+                        Id: '1546.0'
+                        _id: 60f2c9d533e9da487f2e7810
+                        Last Name: Pia
+                        Age: '24.0'
+                        Date: 21/05/2015
+                      - 'No': '89.0'
+                        First Name: Shanice
+                        Country: United States
+                        Gender: Female
+                        Id: '2567.0'
+                        _id: 60f2c9d533e9da487f2e7827
+                        Last Name: Mccrystal
+                        Age: '36.0'
+                        Date: 21/05/2015
+                      - 'No': '36.0'
+                        First Name: Nena
+                        Country: United States
+                        Gender: Female
+                        Id: '8563.0'
+                        _id: 60f2c9d533e9da487f2e77f2
+                        Last Name: Hacker
+                        Age: '29.0'
+                        Date: 15/10/2017
+                      - 'No': '17.0'
+                        First Name: Shavon
+                        Country: France
+                        Gender: Female
+                        Id: '3579.0'
+                        _id: 60f2c9d533e9da487f2e77df
+                        Last Name: Benito
+                        Age: '39.0'
+                        Date: 15/10/2017
+                      - 'No': '2.0'
+                        First Name: Mara
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '1582.0'
+                        _id: 60f2c9d533e9da487f2e77d0
+                        Last Name: Hashimoto
+                        Age: '25.0'
+                        Date: 16/08/2016
+                      - 'No': '53.0'
+                        First Name: Philip
+                        Country: France
+                        Gender: Male
+                        Id: '2587.0'
+                        _id: 60f2c9d533e9da487f2e7803
+                        Last Name: Gent
+                        Age: '36.0'
+                        Date: 21/05/2015
+                      - 'No': '62.0'
+                        First Name: Franklyn
+                        Country: France
+                        Gender: Male
+                        Id: '2579.0'
+                        _id: 60f2c9d533e9da487f2e780c
+                        Last Name: Unknow
+                        Age: '38.0'
+                        Date: 15/10/2017
+                      - 'No': '78.0'
+                        First Name: Francesca
+                        Country: France
+                        Gender: Female
+                        Id: '5412.0'
+                        _id: 60f2c9d533e9da487f2e781c
+                        Last Name: Beaudreau
+                        Age: '23.0'
+                        Date: 15/10/2017
+                      - 'No': '96.0'
+                        First Name: Roma
+                        Country: United States
+                        Gender: Female
+                        Id: '2654.0'
+                        _id: 60f2c9d533e9da487f2e782e
+                        Last Name: Lafollette
+                        Age: '34.0'
+                        Date: 15/10/2017
+                      - 'No': '99.0'
+                        First Name: Jeromy
+                        Country: United States
+                        Gender: Male
+                        Id: '3265.0'
+                        _id: 60f2c9d533e9da487f2e7831
+                        Last Name: Danz
+                        Age: '39.0'
+                        Date: 15/10/2017
+                      - 'No': '3.0'
+                        First Name: Philip
+                        Country: France
+                        Gender: Male
+                        Id: '2587.0'
+                        _id: 60f2c9d533e9da487f2e77d1
+                        Last Name: Gent
+                        Age: '36.0'
+                        Date: 21/05/2015
+                      - 'No': '9.0'
+                        First Name: Vincenza
+                        Country: United States
+                        Gender: Female
+                        Id: '6548.0'
+                        _id: 60f2c9d533e9da487f2e77d7
+                        Last Name: Weiland
+                        Age: '40.0'
+                        Date: 21/05/2015
+                      - 'No': '10.0'
+                        First Name: Fallon
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '5486.0'
+                        _id: 60f2c9d533e9da487f2e77d8
+                        Last Name: Winward
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '26.0'
+                        First Name: Marvel
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '5555.0'
+                        _id: 60f2c9d533e9da487f2e77e8
+                        Last Name: Hail
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '28.0'
+                        First Name: Francesca
+                        Country: France
+                        Gender: Female
+                        Id: '5412.0'
+                        _id: 60f2c9d533e9da487f2e77ea
+                        Last Name: Beaudreau
+                        Age: '23.0'
+                        Date: 15/10/2017
+                      - 'No': '32.0'
+                        First Name: Stasia
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '7521.0'
+                        _id: 60f2c9d533e9da487f2e77ee
+                        Last Name: Becker
+                        Age: '34.0'
+                        Date: 16/08/2016
+                      - 'No': '35.0'
+                        First Name: Dewitt
+                        Country: United States
+                        Gender: Male
+                        Id: '8514.0'
+                        _id: 60f2c9d533e9da487f2e77f1
+                        Last Name: Borger
+                        Age: '36.0'
+                        Date: 21/05/2015
+                      - 'No': '54.0'
+                        First Name: Kathleen
+                        Country: United States
+                        Gender: Female
+                        Id: '3549.0'
+                        _id: 60f2c9d533e9da487f2e7804
+                        Last Name: Hanner
+                        Age: '25.0'
+                        Date: 15/10/2017
+                      - 'No': '58.0'
+                        First Name: Earlean
+                        Country: United States
+                        Gender: Female
+                        Id: '2456.0'
+                        _id: 60f2c9d533e9da487f2e7808
+                        Last Name: Melgar
+                        Age: '27.0'
+                        Date: 16/08/2016
+                      - 'No': '98.0'
+                        First Name: Demetria
+                        Country: United States
+                        Gender: Female
+                        Id: '3265.0'
+                        _id: 60f2c9d533e9da487f2e7830
+                        Last Name: Abbey
+                        Age: '32.0'
+                        Date: 21/05/2015
+                      - 'No': '30.0'
+                        First Name: Carla
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '3264.0'
+                        _id: 60f2c9d533e9da487f2e77ec
+                        Last Name: Trumbull
+                        Age: '28.0'
+                        Date: 21/05/2015
+                      - 'No': '73.0'
+                        First Name: Many
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '5489.0'
+                        _id: 60f2c9d533e9da487f2e7817
+                        Last Name: Cuccia
+                        Age: '46.0'
+                        Date: 21/05/2015
+                      - 'No': '77.0'
+                        First Name: Angelyn
+                        Country: United States
+                        Gender: Female
+                        Id: '6125.0'
+                        _id: 60f2c9d533e9da487f2e781b
+                        Last Name: Vong
+                        Age: '29.0'
+                        Date: 21/05/2015
+                      - 'No': '85.0'
+                        First Name: Dewitt
+                        Country: United States
+                        Gender: Male
+                        Id: '8514.0'
+                        _id: 60f2c9d533e9da487f2e7823
+                        Last Name: Borger
+                        Age: '36.0'
+                        Date: 21/05/2015
+                      - 'No': '86.0'
+                        First Name: Nena
+                        Country: United States
+                        Gender: Female
+                        Id: '8563.0'
+                        _id: 60f2c9d533e9da487f2e7824
+                        Last Name: Hacker
+                        Age: '29.0'
+                        Date: 15/10/2017
+                      - 'No': '92.0'
+                        First Name: Dorcas
+                        Country: United States
+                        Gender: Female
+                        Id: '8765.0'
+                        _id: 60f2c9d533e9da487f2e782a
+                        Last Name: Darity
+                        Age: '37.0'
+                        Date: 21/05/2015
+                      - 'No': '93.0'
+                        First Name: Angel
+                        Country: France
+                        Gender: Male
+                        Id: '3259.0'
+                        _id: 60f2c9d533e9da487f2e782b
+                        Last Name: Sanor
+                        Age: '24.0'
+                        Date: 15/10/2017
+                      - 'No': '14.0'
+                        First Name: Marcel
+                        Country: Great Britain
+                        Gender: Male
+                        Id: '2587.0'
+                        _id: 60f2c9d533e9da487f2e77dc
+                        Last Name: Zabriskie
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '19.0'
+                        First Name: Loreta
+                        Country: France
+                        Gender: Female
+                        Id: '9654.0'
+                        _id: 60f2c9d533e9da487f2e77e1
+                        Last Name: Curren
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '31.0'
+                        First Name: Veta
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '4569.0'
+                        _id: 60f2c9d533e9da487f2e77ed
+                        Last Name: Muntz
+                        Age: '37.0'
+                        Date: 15/10/2017
+                      - 'No': '55.0'
+                        First Name: Nereida
+                        Country: United States
+                        Gender: Female
+                        Id: '2468.0'
+                        _id: 60f2c9d533e9da487f2e7805
+                        Last Name: Magwood
+                        Age: '58.0'
+                        Date: 16/08/2016
+                      - 'No': '56.0'
+                        First Name: Gaston
+                        Country: United States
+                        Gender: Male
+                        Id: '2554.0'
+                        _id: 60f2c9d533e9da487f2e7806
+                        Last Name: Brumm
+                        Age: '24.0'
+                        Date: 21/05/2015
+                      - 'No': '74.0'
+                        First Name: Libbie
+                        Country: France
+                        Gender: Female
+                        Id: '5489.0'
+                        _id: 60f2c9d533e9da487f2e7818
+                        Last Name: Dalby
+                        Age: '42.0'
+                        Date: 21/05/2015
+                      - 'No': '75.0'
+                        First Name: Lester
+                        Country: France
+                        Gender: Male
+                        Id: '6574.0'
+                        _id: 60f2c9d533e9da487f2e7819
+                        Last Name: Prothro
+                        Age: '21.0'
+                        Date: 15/10/2017
+                      - 'No': '90.0'
+                        First Name: Chase
+                        Country: United States
+                        Gender: Male
+                        Id: '2154.0'
+                        _id: 60f2c9d533e9da487f2e7828
+                        Last Name: Karner
+                        Age: '37.0'
+                        Date: 15/10/2017
+                      - 'No': '1.0'
+                        First Name: Dulce
+                        Country: United States
+                        Gender: Female
+                        Id: '1562.0'
+                        _id: 60f2c9d533e9da487f2e77cf
+                        Last Name: Abril
+                        Age: '32.0'
+                        Date: 15/10/2017
+                      - 'No': '21.0'
+                        First Name: Belinda
+                        Country: United States
+                        Gender: Female
+                        Id: '2564.0'
+                        _id: 60f2c9d533e9da487f2e77e3
+                        Last Name: Partain
+                        Age: '37.0'
+                        Date: 15/10/2017
+                      - 'No': '25.0'
+                        First Name: Lester
+                        Country: France
+                        Gender: Male
+                        Id: '6574.0'
+                        _id: 60f2c9d533e9da487f2e77e7
+                        Last Name: Prothro
+                        Age: '21.0'
+                        Date: 15/10/2017
+                      - 'No': '33.0'
+                        First Name: Jona
+                        Country: Great Britain
+                        Gender: Female
+                        Id: '6458.0'
+                        _id: 60f2c9d533e9da487f2e77ef
+                        Last Name: Grindle
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '37.0'
+                        First Name: Kelsie
+                        Country: France
+                        Gender: Female
+                        Id: '8642.0'
+                        _id: 60f2c9d533e9da487f2e77f3
+                        Last Name: Wachtel
+                        Age: '27.0'
+                        Date: 16/08/2016
+                      - 'No': '42.0'
+                        First Name: Dorcas
+                        Country: United States
+                        Gender: Female
+                        Id: '8765.0'
+                        _id: 60f2c9d533e9da487f2e77f8
+                        Last Name: Darity
+                        Age: '37.0'
+                        Date: 21/05/2015
+                      - 'No': '43.0'
+                        First Name: Angel
+                        Country: France
+                        Gender: Male
+                        Id: '3259.0'
+                        _id: 60f2c9d533e9da487f2e77f9
+                        Last Name: Sanor
+                        Age: '24.0'
+                        Date: 15/10/2017
+                      - 'No': '44.0'
+                        First Name: Willodean
+                        Country: United States
+                        Gender: Female
+                        Id: '3567.0'
+                        _id: 60f2c9d533e9da487f2e77fa
+                        Last Name: Harn
+                        Age: '39.0'
+                        Date: 16/08/2016
+                      - 'No': '72.0'
+                        First Name: Holly
+                        Country: United States
+                        Gender: Female
+                        Id: '8561.0'
+                        _id: 60f2c9d533e9da487f2e7816
+                        Last Name: Eudy
+                        Age: '52.0'
+                        Date: 16/08/2016
+                      - 'No': '97.0'
+                        First Name: Felisa
+                        Country: United States
+                        Gender: Female
+                        Id: '6525.0'
+                        _id: 60f2c9d533e9da487f2e782f
+                        Last Name: Cail
+                        Age: '28.0'
+                        Date: 16/08/2016
+                      - 'No': '69.0'
+                        First Name: Loreta
+                        Country: France
+                        Gender: Female
+                        Id: '9654.0'
+                        _id: 60f2c9d533e9da487f2e7813
+                        Last Name: Curren
+                        Age: '26.0'
+                        Date: 21/05/2015
+                      - 'No': '94.0'
+                        First Name: Willodean
+                        Country: United States
+                        Gender: Female
+                        Id: '3567.0'
+                        _id: 60f2c9d533e9da487f2e782c
+                        Last Name: Harn
+                        Age: '39.0'
+                        Date: 16/08/2016
+                      - 'No': '57.0'
+                        First Name: Etta
+                        Country: India
+                        Gender: Female
+                        Id: '3598.0'
+                        _id: 60f454857af77d895e627974
+                        Last Name: Hurn
+                        Age: '56.0'
+                        Date: 15/10/2017
+                      - 'No': '101.0'
+                        First Name: Dinesh
+                        Country: India
+                        Gender: Male
+                        Id: '3598.0'
+                        _id: 60f45fbbae437d791aef09fe
+                        Last Name: I
+                        Age: '56.0'
+                        Date: 15/10/2017
+      operationId: get-collection-records
+      description: Retrieve All the records and query to get specific record
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: '{key}'
+          description: '{value}'
+  /api/v1/collection/upload:
+    post:
+      summary: ''
+      operationId: post-api-v1-collection-upload
+      responses:
+        '200':
+          description: OK
+      description: Upload XL and CSV Files
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: JWT Token
+          required: true
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                File:
+                  type: object
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                File:
+                  type: object
+        description: Upload File
+  '/api/v1/collection/{fileName}':
+    parameters:
+      - schema:
+          type: string
+        name: fileName
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-api-v1-collection-fileName
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: JWT Token
+      description: ''
+components:
+  schemas:
+    GetAllRecordsSchema:
+      description: ''
+      type: object
+      properties:
+        status:
+          type: boolean
+        status_code:
+          type: number
+        message:
+          type: string
+          minLength: 1
+        data:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          items:
+            required:
+              - 'No'
+              - First Name
+              - Country
+              - Gender
+              - Id
+              - _id
+              - Last Name
+              - Age
+              - Date
+            properties:
+              'No':
+                type: string
+                minLength: 1
+              First Name:
+                type: string
+                minLength: 1
+              Country:
+                type: string
+                minLength: 1
+              Gender:
+                type: string
+                minLength: 1
+              Id:
+                type: string
+                minLength: 1
+              _id:
+                type: string
+                minLength: 1
+              Last Name:
+                type: string
+                minLength: 1
+              Age:
+                type: string
+                minLength: 1
+              Date:
+                type: string
+                minLength: 1
+      required:
+        - status
+        - status_code
+        - message
+        - data
+      x-examples:
+        example-1:
+          status: true
+          status_code: 200
+          message: Success
+          data:
+            - 'No': '18.0'
+              First Name: Lauralee
+              Country: Great Britain
+              Gender: Female
+              Id: '6597.0'
+              _id: 60f2c9d533e9da487f2e77e0
+              Last Name: Perrine
+              Age: '28.0'
+              Date: 16/08/2016
+            - 'No': '46.0'
+              First Name: Roma
+              Country: United States
+              Gender: Female
+              Id: '2654.0'
+              _id: 60f2c9d533e9da487f2e77fc
+              Last Name: Lafollette
+              Age: '34.0'
+              Date: 15/10/2017
+            - 'No': '47.0'
+              First Name: Felisa
+              Country: United States
+              Gender: Female
+              Id: '6525.0'
+              _id: 60f2c9d533e9da487f2e77fd
+              Last Name: Cail
+              Age: '28.0'
+              Date: 16/08/2016
+      title: Get_All_Records
+    PostRecordResponseSchema:
+      description: ''
+      type: object
+      properties:
+        'No':
+          type: string
+          minLength: 1
+        First Name:
+          type: string
+          minLength: 1
+        Country:
+          type: string
+          minLength: 1
+        Gender:
+          type: string
+          minLength: 1
+        Id:
+          type: string
+          minLength: 1
+        Last Name:
+          type: string
+          minLength: 1
+        Age:
+          type: string
+          minLength: 1
+        Date:
+          type: string
+          minLength: 1
+      required:
+        - 'No'
+        - First Name
+        - Country
+        - Gender
+        - Id
+        - Last Name
+        - Age
+        - Date
+      x-examples:
+        example-1:
+          'No': '101.0'
+          First Name: Dinesh
+          Country: India
+          Gender: Male
+          Id: '3598.0'
+          Last Name: I
+          Age: '56.0'
+          Date: 15/10/2017
+      examples:
+        - 'No': string
+          First Name: string
+          Country: string
+          Gender: string
+          Id: string
+          Last Name: string
+          Age: string
+          Date: string
+      title: PostRecordResponseSchema

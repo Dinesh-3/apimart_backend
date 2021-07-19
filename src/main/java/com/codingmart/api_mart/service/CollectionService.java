@@ -64,7 +64,6 @@ public class CollectionService {
                 ) {
             myFile.createNewFile();
             fos.write(file.getBytes());
-            System.out.println("File Stored Successfully");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,6 +120,26 @@ public class CollectionService {
         return getResponseBody("Success", records);
     }
 
+    public ResponseBody insertRecord(String user, String fileName, Map<String, String> requestBody) {
+        String collectionName = (user.toLowerCase() + fileName);
+        Map<String, String> record =collectionRepository.insertRecord(collectionName, requestBody);
+        return getResponseBody("Record Inserted Successfully", record);
+    }
+
+    public ResponseBody updateRecord(String user, String fileName, Map<String, String> queryParams, Map<String, String> requestBody) {
+        String collectionName = (user.toLowerCase() + fileName);
+        Map<String, String> record = collectionRepository.updateRecord(collectionName, queryParams, requestBody);
+
+        return getResponseBody("Record Updated Successfully", record);
+    }
+
+    public ResponseBody deleteRecord(String user, String fileName, Map<String, String> queryParams) {
+        String collectionName = (user.toLowerCase() + fileName);
+        boolean isDeleted = collectionRepository.deleteRecord(collectionName, queryParams);
+
+        return getResponseBody("Success", isDeleted);
+    }
+
     public ResponseBody deleteCollectionByUser(String fileName, HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String username = GetTokenPayload.getPayload(token, "sub");
@@ -155,7 +174,6 @@ public class CollectionService {
             String value = csvHeader.next();
             headers.add(value);
         }
-        System.out.println("headers = " + headers);
 
         List<Map<String, Object>> listOfRecords = new ArrayList<>();
 
@@ -223,6 +241,5 @@ public class CollectionService {
     private ResponseBody getResponseBody(boolean status, int status_code, String message, Object data){
         return new ResponseBody(status, status_code, message, data);
     }
-
 
 }

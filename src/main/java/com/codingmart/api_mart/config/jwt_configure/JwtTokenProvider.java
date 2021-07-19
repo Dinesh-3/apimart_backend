@@ -31,8 +31,6 @@ public class JwtTokenProvider implements Serializable {
 	private long validityInMilliseconds = 1000 * 60 * 60 * 60;
 
 	public String createToken(String username, String email, String id) {
-		System.out.println("username = " + username);
-		System.out.println("email = " + email);
 		Claims claims = Jwts.claims().setSubject(username);
 		claims.put("email", email);
 		claims.put("id", id);
