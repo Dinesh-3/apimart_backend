@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class CustomExceptionHandler {
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseBody> handleException(Exception ex) {
-        ResponseBody responseBody = new ResponseBody(false,500, ex.getMessage(), null);
-        return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ResponseBody> handleException(Exception ex) {
+//        ResponseBody responseBody = new ResponseBody(false,500, ex.getMessage(), null);
+//        return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 }
