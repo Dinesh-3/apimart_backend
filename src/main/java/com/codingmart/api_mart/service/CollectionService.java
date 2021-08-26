@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -128,7 +129,6 @@ public class CollectionService {
     public ResponseBody updateRecord(String user, String fileName, Map<String, String> queryParams, Map<String, String> requestBody) {
         String collectionName = (user.toLowerCase() + fileName);
         Map<String, String> record = collectionRepository.updateRecord(collectionName, queryParams, requestBody);
-
         return getResponseBody("Record Updated Successfully", record);
     }
 

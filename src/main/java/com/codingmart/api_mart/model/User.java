@@ -1,5 +1,8 @@
 package com.codingmart.api_mart.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 public class User {
@@ -27,6 +30,7 @@ public class User {
         this.password = password;
     }
 
+    @JsonProperty("user_id")
     public String getId() {
         return id;
     }
@@ -51,6 +55,7 @@ public class User {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
