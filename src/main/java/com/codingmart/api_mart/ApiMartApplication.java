@@ -1,6 +1,8 @@
 package com.codingmart.api_mart;
 
 import com.codingmart.api_mart.utils.MongoDBClient;
+import com.mongodb.MongoClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,14 +13,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class ApiMartApplication implements CommandLineRunner {
 
+	@Value("${server.port:NA}")
+	private String PORT;
+
 	public static void main(String[] args) {
 		SpringApplication.run(ApiMartApplication.class, args);
-		System.out.println("Server Started...");
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		MongoDBClient.getMongoClient();
+		MongoClient mongoClient = MongoDBClient.getMongoClient();
+		mongoClient.startSession();
+		System.out.println("Server Successfully Started on Port: " + PORT);
 	}
 	@Configuration
 	public class WebConfiguration implements WebMvcConfigurer {
