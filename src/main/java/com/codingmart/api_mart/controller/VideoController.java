@@ -15,7 +15,6 @@ public class VideoController {
     @GetMapping(value = "{title}", produces = "video/mp4")
     public Resource getVideos(@PathVariable String title, @RequestHeader("Range") String range) {
         System.out.println("range in bytes() : " + range);
-        new Object()
         return service.getVideo(title);
     }
 }
