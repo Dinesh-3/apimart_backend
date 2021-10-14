@@ -9,6 +9,10 @@ public class ResponseBody {
     public ResponseBody() {
     }
 
+    public ResponseBody(Object data) {
+        this.data = data;
+    }
+
     public ResponseBody(String message, Object data) {
         this.message = message;
         this.data = data;
