@@ -25,4 +25,10 @@ public class AlgorithmController {
         return new ResponseEntity<>(new ResponseBody("Success", result), HttpStatus.OK);
     }
 
+    @GetMapping("/possiblePathWithoutMem/{grid}")
+    ResponseEntity<ResponseBody> possiblePathWithoutMem(@PathVariable("grid") int count){
+        int result = service.countPathsWithoutMem(count);
+        return new ResponseEntity<>(new ResponseBody("Success", result), HttpStatus.OK);
+    }
+
 }

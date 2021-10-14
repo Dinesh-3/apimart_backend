@@ -10,6 +10,10 @@ public class AlgorithmService {
         return countTotalPaths(count, 0, 0, new int[count+1][count+1]);
     }
 
+    public int countPathsWithoutMem(int count) {
+        return countPathsWithoutMem(count, 0, 0);
+    }
+
     private static int countTotalPaths(int n, int row, int column, int[][] mem) {
         if(row > n || column > n) return 0;
         if(row == n && column == n) return 1;
@@ -18,5 +22,11 @@ public class AlgorithmService {
         }
 
         return mem[row][column];
+    }
+
+    private static int countPathsWithoutMem(int n, int row, int column) {
+        if(row > n || column > n) return 0;
+        if(row == n && column == n) return 1;
+            return countPathsWithoutMem(n,row+1, column) + countPathsWithoutMem(n, row, column+1);
     }
 }
