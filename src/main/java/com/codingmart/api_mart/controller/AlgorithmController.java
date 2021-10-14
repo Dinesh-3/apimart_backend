@@ -21,7 +21,7 @@ public class AlgorithmController {
 
     @GetMapping("/possiblePathInGrid/{grid}")
     ResponseEntity<ResponseBody> possiblePathsInGrid(@PathVariable("grid") int count){
-        int result = service.possiblePathsInGrid(count);
+        long result = service.possiblePathsInGrid(count);
         return new ResponseEntity<>(new ResponseBody("Success", result), HttpStatus.OK);
     }
 

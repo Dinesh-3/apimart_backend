@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AlgorithmService {
 
-    public int possiblePathsInGrid(int count) {
+    public long possiblePathsInGrid(int count) {
         return countTotalPaths(count, 0, 0, new int[count+1][count+1]);
     }
 
