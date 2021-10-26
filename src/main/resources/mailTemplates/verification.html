@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>OTT ALERT</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700;800&display=swap");
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        .main-container {
+            font-family: "Poppins", sans-serif;
+            background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
+            text-align: center;
+        }
+
+        .header {
+            padding: 1rem;
+            width: 100%;
+            background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .logo-container {
+            padding: 1rem;
+        }
+
+        .logo-container img {
+            width: 6rem;
+            height: 6rem;
+        }
+        .card-container {
+            background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .card-container td {
+            width: 100%;
+            max-width: 15rem;
+            display: inline-block;
+            margin: 1rem;
+            vertical-align: top;
+        }
+
+        .card {
+            padding: 1rem;
+            background-color: #434a55;
+            text-align: center;
+            box-shadow: 0 0 50px #ccc;
+            border-radius: 1rem;
+            color: #fff;
+            margin: 1rem 0rem;
+        }
+
+        .movie-logo {
+            padding: 1rem;
+            border-radius: 100%;
+            width: 10rem;
+            height: 10rem;
+            overflow: hidden;
+            margin: 1rem auto;
+        }
+
+        .movie-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 100%;
+        }
+
+        ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        li {
+            padding: 0.5rem;
+            border-radius: 100%;
+            width: 3rem;
+            height: 3rem;
+            overflow: hidden;
+            margin-left: 0 !important;
+        }
+
+        li img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 100%;
+        }
+
+        .watch-providers {
+            margin: 1rem auto;
+        }
+
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <table class="header" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+<!--                <a class="logo-container" href="https://ott-alert-task.netlify.app">-->
+<!--                    <img-->
+<!--                            src="https://firebasestorage.googleapis.com/v0/b/ott-alert.appspot.com/o/logo.png?alt=media&token=2eb3946d-b925-4221-b285-7d29067ec979"-->
+<!--                            alt="API MART"-->
+<!--                    />-->
+<!--                </a>-->
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h3 style="margin: 1rem 0rem;">API MART</h3>
+            </td>
+        </tr>
+    </table>
+    <table class="card-container" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <h3 style="margin: 1rem 0rem"><h3 th:text="${verify.userName}" style="text-transform: capitalize"> </h3> Click below link to verify email</h3>
+                <div class="card">
+                    <a style="color: #ffffff;text-decoration: none" th:href="${verify.link}">Verify</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

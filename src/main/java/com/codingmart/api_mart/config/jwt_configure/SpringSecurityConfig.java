@@ -28,7 +28,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors();
         http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/user/signup", "/api/v1/user/login", "/api/v1/collection/get/**", "/api/v1/docs/**", "/api/v1/video/**")
+                .antMatchers("/api/v1/user/signup", "/api/v1/user/login","/api/v1/user/verify/**", "/api/v1/collection/get/**", "/api/v1/docs/**", "/api/v1/video/**")
                 .permitAll().anyRequest().authenticated();
         http.apply(new JwtTokenConfigurer(tokenProvider));
     }

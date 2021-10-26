@@ -1,5 +1,7 @@
 package com.codingmart.api_mart.service;
 
+import com.codingmart.api_mart.ExceptionHandler.ClientErrorException;
+import com.codingmart.api_mart.configuration.SystemConfig;
 import com.codingmart.api_mart.model.Table;
 import com.codingmart.api_mart.repository.CollectionRepository;
 import com.codingmart.api_mart.repository.UserRepository;
@@ -13,8 +15,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,7 +57,7 @@ public class CollectionService {
         File myFile= new File(filePath);
 
         String collectionName = username + fileName;
-
+        handleReservedCollection(collectionName);
         boolean isTableExist = userTableRepository.isUserAndCollectionExists(username, collectionName);
 
         if(isTableExist) return getResponseBody(false, 400, "table already exist please change file name", null);
@@ -109,6 +111,7 @@ public class CollectionService {
 
     public ResponseBody getCollectionByUser(String user, String fileName, Map<String,String> queryParams) {
         String collectionName = (user.toLowerCase() + fileName);
+        handleReservedCollection(collectionName);
         List<HashMap<String, String>> records = null;
         try {
             records = collectionRepository.getRecordsByCollection(collectionName, queryParams);
@@ -120,20 +123,27 @@ public class CollectionService {
         return getResponseBody("Success", records);
     }
 
+    private void handleReservedCollection(String collectionName) {
+        if(SystemConfig.getReservedCollections().contains(collectionName)) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, "File Name Not available change file name to continue");
+    }
+
     public ResponseBody insertRecord(String user, String fileName, Map<String, String> requestBody) {
         String collectionName = (user.toLowerCase() + fileName);
+        handleReservedCollection(collectionName);
         Map<String, String> record =collectionRepository.insertRecord(collectionName, requestBody);
         return getResponseBody("Record Inserted Successfully", record);
     }
 
     public ResponseBody updateRecord(String user, String fileName, Map<String, String> queryParams, Map<String, String> requestBody) {
         String collectionName = (user.toLowerCase() + fileName);
+        handleReservedCollection(collectionName);
         Map<String, String> record = collectionRepository.updateRecord(collectionName, queryParams, requestBody);
         return getResponseBody("Record Updated Successfully", record);
     }
 
     public ResponseBody deleteRecord(String user, String fileName, Map<String, String> queryParams) {
         String collectionName = (user.toLowerCase() + fileName);
+        handleReservedCollection(collectionName);
         boolean isDeleted = collectionRepository.deleteRecord(collectionName, queryParams);
 
         return getResponseBody("Success", isDeleted);
@@ -230,8 +240,6 @@ public class CollectionService {
                 }
             case FORMULA:
                 return cell.getCellFormula();
-            case BLANK:
-                return "";
             default:
                 return "";
         }

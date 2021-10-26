@@ -3,7 +3,9 @@ package com.codingmart.api_mart.utils;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 
 import java.io.Serializable;
 
@@ -30,8 +32,8 @@ public class MongoDBClient implements Cloneable, Serializable {
 
     private static synchronized void setValue() {
         if(mongoDBClient == null) {
-            MongoClientURI URI = new MongoClientURI("mongodb+srv://root:aZUnLWfdUMcB3my2@cluster0.obetp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
-            mongoDBClient = new MongoClient(URI);
+            MongoClientURI MONGO_URI = new MongoClientURI("mongodb://localhost:27017/api_mart");
+            mongoDBClient = new MongoClient(MONGO_URI);
         }
     }
 

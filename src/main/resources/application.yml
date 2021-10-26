@@ -1,0 +1,29 @@
+spring:
+  jackson:
+    default: non-null
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 3MB
+      file-size-threshold: 2KB
+      max-file-size: 3MB
+  profiles:
+    active: prod
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+    host: smtp.gmail.com
+    username: ottalert.noreply@gmail.com
+    password: ${MAIL_PASSWORD}
+    port: 587
+
+jwt:
+  secret-key: ${JWT_SECRET}
+server:
+  port: 5000
+file:
+  upload-dir: src/main/resources/uploads/

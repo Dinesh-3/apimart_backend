@@ -18,6 +18,12 @@ public class ResponseBody {
         this.data = data;
     }
 
+    public ResponseBody(boolean status, int status_code, String message) {
+        this.status = status;
+        this.status_code = status_code;
+        this.message = message;
+    }
+
     public ResponseBody(boolean status, int status_code, String message, Object data) {
         this.status = status;
         this.status_code = status_code;
