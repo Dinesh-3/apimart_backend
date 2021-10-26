@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-public class ApiMartApplication implements CommandLineRunner, ExitCodeGenerator {
+public class ApiMartApplication implements CommandLineRunner {
 
 	@Value("${server.port:NA}")
 	private String PORT;
@@ -35,19 +35,19 @@ public class ApiMartApplication implements CommandLineRunner, ExitCodeGenerator 
 		System.out.println("Server Successfully Started on Port: " + PORT);
 	}
 
-	@Override
-	public int getExitCode() {
-		return 0; // Process finished with exit code 0 : for success
-	}
+//	@Override
+//	public int getExitCode() {
+//		return 0; // Process finished with exit code 0 : for success
+//	}
 
-	@Bean
-	ExitCodeExceptionMapper exitCodeExceptionMapper(){
-		return exception -> {
-			if(exception.getCause() instanceof NullPointerException) return 10;
-			if(exception.getCause() instanceof NumberFormatException) return 11;
-			return 0;
-		};
-	}
+//	@Bean
+//	ExitCodeExceptionMapper exitCodeExceptionMapper(){
+//		return exception -> {
+//			if(exception.getCause() instanceof NullPointerException) return 10;
+//			if(exception.getCause() instanceof NumberFormatException) return 11;
+//			return 0;
+//		};
+//	}
 
 	@Bean
 	@Primary

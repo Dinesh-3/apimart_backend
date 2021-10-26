@@ -32,7 +32,7 @@ public class MongoDBClient implements Cloneable, Serializable {
 
     private static synchronized void setValue() {
         if(mongoDBClient == null) {
-            MongoClientURI MONGO_URI = new MongoClientURI("mongodb://localhost:27017/api_mart");
+            MongoClientURI MONGO_URI = new MongoClientURI(System.getenv("MONGO_URI"));
             mongoDBClient = new MongoClient(MONGO_URI);
         }
     }
