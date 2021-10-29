@@ -1,40 +1,34 @@
 package com.codingmart.api_mart.service;
 
 import com.codingmart.api_mart.ExceptionHandler.ClientErrorException;
+import com.codingmart.api_mart.ExceptionHandler.StatusCodeException;
 import com.codingmart.api_mart.configuration.SystemConfig;
 import com.codingmart.api_mart.model.Table;
+import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.repository.CollectionRepository;
-import com.codingmart.api_mart.repository.UserRepository;
 import com.codingmart.api_mart.repository.UserTableRepository;
-import com.codingmart.api_mart.utils.GetTokenPayload;
-import com.codingmart.api_mart.utils.ResponseBody;
+import com.codingmart.api_mart.utils.FileName;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.poi.ss.usermodel.*;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static java.lang.String.format;
 
 @Service
 public class CollectionService {
-
-    @Autowired
-    private  UserRepository userRepository;
+    private static final String[] fileTypes = {"csv", "xlsx", "xls"};
+    private static final Set<String> supportedFileTypes = new HashSet<>(Arrays.asList(fileTypes));
 
     @Autowired
     private CollectionRepository collectionRepository;
@@ -42,139 +36,125 @@ public class CollectionService {
     @Autowired
     private UserTableRepository userTableRepository;
 
-    public ResponseBody uploadCollection(MultipartFile file, HttpServletRequest request) {
-        String fullName = file.getOriginalFilename().replace(" ", "");
-        String[] splitName = fullName.split("[.]");
-        String fileName = splitName[0];
-        String fileType = splitName[1];
-        if(fileType.equals("csv") || fileType.equals("xlsx") || fileType.equals("xls")) System.out.println("fileType = " + fileType);
-        else return getResponseBody(false, 400, "File Type Not supported", null);
-        String token = request.getHeader("Authorization");
-        String username = GetTokenPayload.getPayload(token, "sub");
+    public String upload(MultipartFile multipartFile, User user) {
+        String fullName = multipartFile.getOriginalFilename().replace(" ", "");
+        FileName fileName = new FileName(fullName);
+        String fileType = fileName.getType();
 
+        if(!supportedFileTypes.contains(fileType)) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, format("File Type: %s Not supported", fileType));
 
-        String filePath = "src/main/resources/uploads/" + fullName;
-        File myFile= new File(filePath);
+        String collectionName = getCollectionName(user.getName(), fileName);
 
+        File saveFile = saveFile(multipartFile, fullName);
+        List<Map<String, Object>> records = getRecords(fileType, saveFile);
+
+        collectionRepository.saveCollection(collectionName, records);
+        userTableRepository.save(new Table(user.getName(), fileName.getFullName(), collectionName));
+        return "Success";
+    }
+
+    private String getCollectionName(String username, FileName fileName) {
         String collectionName = username + fileName;
         handleReservedCollection(collectionName);
-        boolean isTableExist = userTableRepository.isUserAndCollectionExists(username, collectionName);
+        boolean isTableExist = userTableRepository.isExist(username, collectionName);
+        if(isTableExist) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, "Table already exist. Change file name");
+        return collectionName;
+    }
 
-        if(isTableExist) return getResponseBody(false, 400, "table already exist please change file name", null);
-
+    private List<Map<String, Object>> getRecords(String fileType, File myFile) {
         try (
-                FileOutputStream fos=new FileOutputStream(myFile);
-                ) {
-            myFile.createNewFile();
-            fos.write(file.getBytes());
+                Reader reader = new FileReader(myFile.getAbsolutePath());
+                FileInputStream fileInputStream = new FileInputStream(myFile)
+        ) {
+            List<Map<String, Object>> records = new ArrayList<>();
+            if(fileType.equals("csv")) records = parseFromCsv(reader);
+            if(fileType.equals("xlsx")) records = parseFromXlsx(new XSSFWorkbook(fileInputStream));
+            if(fileType.equals("xls")) records = parseFromXlsx(new HSSFWorkbook(fileInputStream));
+            return records;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ClientErrorException(400, format("Error in %s file: %s" , fileType, e.getMessage()));
+        }finally {
+            deleteFile(myFile.getAbsolutePath());
+        }
+    }
+
+    private void deleteFile(String filePath) {
+        String userDirectory = Paths.get("").toAbsolutePath().toString();
+        try {
+            Files.deleteIfExists(Paths.get(userDirectory + "/" + filePath));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        try (
-                Reader reader = new FileReader(filePath);
-                BufferedReader br = new BufferedReader(reader);
-                FileInputStream fileInputStream = new FileInputStream(myFile);
-        ) {
-            List<Map<String, Object>> records = new ArrayList<>();
-            if (fileType.equals("csv")) records = getHashMapFromApacheCSV(reader);
-            if(fileType.equals("xlsx")) records = getHashMapFromXL(new XSSFWorkbook(fileInputStream));
-            if(fileType.equals("xls")) records = getHashMapFromXL(new HSSFWorkbook(fileInputStream));
-            boolean isSaved = collectionRepository.saveCollection(collectionName, records);
-            if(isSaved) {
-                Table table = userTableRepository.save(new Table(username, fileName, collectionName));
-                return getResponseBody("Success Data Saved", table);
-            }
-            return getResponseBody(false, 400, "Unable to parse " + fileType + " File", null);
-        } catch (Exception e) {
+    private File saveFile(MultipartFile multipartFile, String fileName) {
+        //        try (
+//                FileOutputStream fos=new FileOutputStream(myFile);
+//                ) {
+//            myFile.createNewFile();
+//            fos.write(file.getBytes());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        try {
+            String saveFilePath = "src/main/resources/uploads/" + fileName;
+            File saveFile = new File(saveFilePath);
+            multipartFile.transferTo(saveFile);
+            return saveFile;
+        } catch (IOException e) {
             e.printStackTrace();
-            return getResponseBody(false, 400, "Error in " + fileType + " file " + e.getMessage(), null);
-        }finally {
-            String userDirectory = Paths.get("").toAbsolutePath().toString();
-            try {
-                Files.deleteIfExists(Paths.get(userDirectory + "/" + filePath));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to parse file Try again");
         }
-
     }
 
-    public ResponseBody getAllCollectionByUser(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        String username = GetTokenPayload.getPayload(token, "sub");
-
-        List<Table> tables = userTableRepository.findByUser(username);
-
-        return getResponseBody("Success", tables);
+    public List<Table> getAllCollectionByUser(String username) {
+        return userTableRepository.findByUser(username);
     }
 
-    public ResponseBody getCollectionByUser(String user, String fileName, Map<String,String> queryParams) {
+    public List<HashMap<String, String>> getCollectionByUser(String user, String fileName, Map<String,String> queryParams) {
         String collectionName = (user.toLowerCase() + fileName);
         handleReservedCollection(collectionName);
-        List<HashMap<String, String>> records = null;
+        List<HashMap<String, String>> records;
         try {
             records = collectionRepository.getRecordsByCollection(collectionName, queryParams);
         } catch (IOException e) {
             e.printStackTrace();
-            return getResponseBody(false, 500, e.getMessage(), null);
+            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
-        return getResponseBody("Success", records);
+        return records;
     }
 
     private void handleReservedCollection(String collectionName) {
         if(SystemConfig.getReservedCollections().contains(collectionName)) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, "File Name Not available change file name to continue");
     }
 
-    public ResponseBody insertRecord(String user, String fileName, Map<String, String> requestBody) {
+    public Map<String, String> insertRecord(String user, String fileName, Map<String, String> requestBody) {
         String collectionName = (user.toLowerCase() + fileName);
         handleReservedCollection(collectionName);
-        Map<String, String> record =collectionRepository.insertRecord(collectionName, requestBody);
-        return getResponseBody("Record Inserted Successfully", record);
+        return collectionRepository.insertRecord(collectionName, requestBody);
     }
 
-    public ResponseBody updateRecord(String user, String fileName, Map<String, String> queryParams, Map<String, String> requestBody) {
+    public Map<String, String> updateRecord(String user, String fileName, Map<String, String> queryParams, Map<String, String> requestBody) {
         String collectionName = (user.toLowerCase() + fileName);
         handleReservedCollection(collectionName);
-        Map<String, String> record = collectionRepository.updateRecord(collectionName, queryParams, requestBody);
-        return getResponseBody("Record Updated Successfully", record);
+        return collectionRepository.updateRecord(collectionName, queryParams, requestBody);
     }
 
-    public ResponseBody deleteRecord(String user, String fileName, Map<String, String> queryParams) {
+    public boolean deleteRecord(String user, String fileName, Map<String, String> queryParams) {
         String collectionName = (user.toLowerCase() + fileName);
         handleReservedCollection(collectionName);
-        boolean isDeleted = collectionRepository.deleteRecord(collectionName, queryParams);
-
-        return getResponseBody("Success", isDeleted);
+        return collectionRepository.deleteRecord(collectionName, queryParams);
     }
 
-    public ResponseBody deleteCollectionByUser(String fileName, HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        String username = GetTokenPayload.getPayload(token, "sub");
-
+    public String deleteCollectionByUser(String fileName, String username) {
         userTableRepository.deleteTableByUser(username.toLowerCase(), fileName);
 
-        return getResponseBody("Collection Deleted Successfully", true);
-
+        return "Collection Deleted Successfully";
     }
 
-    private ResponseBody getResponseBody(String message, Object data){
-        return new ResponseBody(message, data);
-    }
-
-    private List<Map<String, Object>> getHashMapFromCSV(BufferedReader br) throws IOException {
-        String[] headers = br.readLine().split(",");
-        List<Map<String, Object>> records =
-                br.lines().map(s -> s.split(","))
-                        .map(t -> IntStream.range(0, t.length)
-                                .boxed()
-                                .collect(toMap(i -> headers[i], i -> (Object) t[i])))
-                        .collect(toList());
-        return records;
-    }
-
-    private List<Map<String, Object>> getHashMapFromApacheCSV(Reader reader) throws IOException {
+    private List<Map<String, Object>> parseFromCsv(Reader reader) throws IOException {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
         Iterator<String> csvHeader = records.iterator().next().iterator();
@@ -201,7 +181,7 @@ public class CollectionService {
     }
 
 
-    private List<Map<String, Object>> getHashMapFromXL(Workbook workbook) throws IOException {
+    private List<Map<String, Object>> parseFromXlsx(Workbook workbook) throws IOException {
         Sheet sheet = workbook.getSheetAt(0);
         int lastRowNum = sheet.getLastRowNum();
         Row header = sheet.getRow(0);
@@ -243,10 +223,6 @@ public class CollectionService {
             default:
                 return "";
         }
-    }
-
-    private ResponseBody getResponseBody(boolean status, int status_code, String message, Object data){
-        return new ResponseBody(status, status_code, message, data);
     }
 
 }

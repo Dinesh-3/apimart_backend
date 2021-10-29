@@ -9,7 +9,6 @@ import com.codingmart.api_mart.repository.VerificationRepository;
 import com.codingmart.api_mart.utils.GetTokenPayload;
 import com.codingmart.api_mart.utils.OtpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,29 +24,33 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
+    private final UserRepository userRepository;
     private VerificationRepository verificationRepository;
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtTokenProvider tokenProvider;
-
-    @Autowired
     private MailService mailService;
 
-    public ResponseBody getAllUser() {
-        List<User> users = userRepository.getAll();
-        return getResponseBody("Success", users);
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public ResponseBody getUserById(HttpServletRequest request) {
+    @Autowired
+    public UserService(UserRepository userRepository, VerificationRepository verificationRepository, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider, MailService mailService) {
+        this.userRepository = userRepository;
+        this.verificationRepository = verificationRepository;
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+        this.mailService = mailService;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.getAll();
+    }
+
+    public User getUserById(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String name = GetTokenPayload.getPayload(token, "sub");
-        User user = userRepository.findByName(name);
-        return getResponseBody("Success", user);
+        return userRepository.findByName(name);
     }
 
     public ResponseBody signup(User user) {
@@ -57,7 +60,7 @@ public class UserService {
 
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 
-        boolean savedUser = userRepository.save(user);
+        userRepository.save(user);
         sendVerifyLink(user.getUser_id());
         return new ResponseBody("Signup Success, Check mail to verify email", user);
     }
@@ -69,36 +72,10 @@ public class UserService {
                 .authenticate(new UsernamePasswordAuthenticationToken(savedUser.getName(), user.getPassword()));
         Verification verify = verificationRepository.findById(savedUser.getUser_id());
         if(!verify.isIs_email_verified()) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Email Not Verified. Verify email to continue");
-        HashMap body = getHashMap();
-        body.put("token", tokenProvider.createToken(savedUser.getName(), savedUser.getEmail(), savedUser.getId()));
+        HashMap<String, Object> body = new HashMap<>();
+        body.put("token", tokenProvider.createToken(savedUser.getName(), savedUser.getEmail(), savedUser.getUser_id()));
         body.put("user", savedUser);
-        return getResponseBody("Login Success", body);
-    }
-
-    public ResponseBody updateUser(User user) {
-        return new ResponseBody("","");
-    }
-
-    public ResponseBody deleteUser(long id) {
-        return new ResponseBody("","");
-    }
-
-    public ResponseBody test() {
-        boolean result = userRepository.isEmailOrNameExists("Test", "asasdfk@gmail.com");
-        return getResponseBody("Success", result);
-    }
-
-    private ResponseBody getResponseBody(String message, Object data){
-        return new ResponseBody(message, data);
-    }
-
-    private ResponseBody getResponseBody(boolean status, int status_code, String message, Object data){
-        return new ResponseBody(status, status_code, message, data);
-    }
-
-    @Bean
-    private HashMap<String, Object> getHashMap() {
-        return new HashMap<>();
+        return new ResponseBody("Login Success", body);
     }
 
     public boolean verifyEmail(String otp, String id) {
@@ -116,7 +93,7 @@ public class UserService {
                 e.printStackTrace();
             }
             throw new ClientErrorException(HttpStatus.BAD_REQUEST, "Expired Link. New Verify link sent to mail");
-        };
+        }
         verification.setIs_email_verified(true);
         verificationRepository.findOneAndUpdate(id, verification);
         return true;

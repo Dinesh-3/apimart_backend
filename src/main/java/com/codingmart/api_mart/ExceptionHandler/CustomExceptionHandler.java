@@ -6,16 +6,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(HttpClientErrorException.class)
-    public ResponseEntity<ResponseBody> clientErrorException(HttpClientErrorException ex) {
-        ResponseBody responseBody = new ResponseBody(false,ex.getStatusCode().value(), ex.getResponseBodyAsString());
-        return new ResponseEntity<>(responseBody, ex.getStatusCode());
-    }
-
+//    @ExceptionHandler(HttpClientErrorException.class)
+//    public ResponseEntity<ResponseBody> clientErrorException(HttpClientErrorException ex) {
+//        ResponseBody responseBody = new ResponseBody(false,ex.getStatusCode().value(), ex.getResponseBodyAsString());
+//        return new ResponseEntity<>(responseBody, ex.getStatusCode());
+//    }
+//
+//    @ExceptionHandler(HttpStatusCodeException.class)
+//    public ResponseEntity<ResponseBody> httpStatusCodeException(HttpStatusCodeException ex) {
+//        ResponseBody responseBody = new ResponseBody(false,ex.getStatusCode().value(), ex.getResponseBodyAsString());
+//        return new ResponseEntity<>(responseBody, ex.getStatusCode());
+//    }
+//
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<ResponseBody> handleException(Exception ex) {
 //        ex.printStackTrace();

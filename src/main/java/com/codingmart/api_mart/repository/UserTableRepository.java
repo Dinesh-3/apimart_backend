@@ -30,6 +30,10 @@ public class UserTableRepository {
     public List<Table> findByUserAndCollection(String user, String table) {
         Bson filter = Filters.and(Filters.eq("user", user), Filters.eq("collection", table));
         FindIterable<Document> userTables = collection.find(filter);
+        return getTables(userTables);
+    }
+
+    private List<Table> getTables(FindIterable<Document> userTables) {
         List<Table> tables = new ArrayList<>();
         for(Document item: userTables) {
             Table updatedTable = new Table(item.get("_id").toString(), item.getString("user"), item.getString("fileName"), item.getString("collection"), item.get("created_at").toString());
@@ -41,15 +45,10 @@ public class UserTableRepository {
     public List<Table> findByUser(String user) {
         Bson filter = Filters.eq("user", user);
         FindIterable<Document> userTables = collection.find(filter);
-        List<Table> tables = new ArrayList<>();
-        for(Document item: userTables) {
-            Table updatedTable = new Table(item.get("_id").toString(), item.getString("user"), item.getString("fileName"), item.getString("collection"), item.get("created_at").toString());
-            tables.add(updatedTable);
-        }
-        return tables;
+        return getTables(userTables);
     }
 
-    public boolean isUserAndCollectionExists(String user, String table) {
+    public boolean isExist(String user, String table) {
         Bson filter = Filters.and(Filters.eq("user", user), Filters.eq("collection", table));
         FindIterable<Document> userTables = collection.find(filter);
         for(Document item: userTables) {

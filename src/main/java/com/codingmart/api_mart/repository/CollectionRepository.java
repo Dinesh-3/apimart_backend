@@ -57,7 +57,7 @@ public class CollectionRepository {
         queryParams.remove("query_page");
 
         Bson filter = Document.parse(new Gson().toJson(queryParams));
-        FindIterable<Document> documents = null;
+        FindIterable<Document> documents;
         if(pageQuery.containsKey("limit") && pageQuery.containsKey("page")) {
             int limit = pageQuery.get("limit");
             int page = pageQuery.get("page");
@@ -104,14 +104,7 @@ public class CollectionRepository {
             document.append(key, requestBody.get(key));
         }
         UpdateOptions options = new UpdateOptions().upsert(false);
-        UpdateResult updatedDocument = collection.replaceOne(filter, document, options);
-
-//        Type type = new TypeToken<HashMap<String, String>>(){}.getType();
-//
-//        String id = updatedDocument.get("_id").toString();
-//        updatedDocument.remove("_id");
-//        Map<String,String> updatedRecord = new Gson().fromJson(updatedDocument.toJson(), type);
-//        updatedRecord.put("_id", id);
+        collection.replaceOne(filter, document, options);
 
         return requestBody;
     }
@@ -130,7 +123,7 @@ public class CollectionRepository {
 
     private boolean collectionExists(final String collectionName) {
         return mongoDBClient.listCollectionNames()
-                .into(new ArrayList<String>()).contains(collectionName);
+                .into(new ArrayList<>()).contains(collectionName);
     }
 
     private Map<String, Integer> getPageQuery(Map<String, String> query) {
@@ -145,7 +138,5 @@ public class CollectionRepository {
         }
         return hashMap;
     }
-
-   private Map<String, String> getHashMap(){ return new HashMap<String, String>();}
 
 }

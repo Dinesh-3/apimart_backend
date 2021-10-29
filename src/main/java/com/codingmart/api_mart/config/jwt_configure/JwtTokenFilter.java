@@ -1,20 +1,23 @@
 package com.codingmart.api_mart.config.jwt_configure;
 
 
-import java.io.IOException;
+import com.codingmart.api_mart.ExceptionHandler.ClientErrorException;
+import com.codingmart.api_mart.model.User;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
 
+@Configuration
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-	private JwtTokenProvider tokenProvider;
+	private final JwtTokenProvider tokenProvider;
 
 	public JwtTokenFilter(JwtTokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
@@ -25,20 +28,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		String token = request.getHeader("Authorization");
 		try {
-			if (token != null && tokenProvider.validateToken(token)) {
+			if (token != null) {
+				User user = tokenProvider.getUser(token);
+				request.setAttribute("user", user);
 				SecurityContextHolder.getContext().setAuthentication(tokenProvider.getAuthentication(token));
 			}
 		} catch (RuntimeException e) {
-			try {
-				SecurityContextHolder.clearContext();
-				response.setContentType("application/json");
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				response.getWriter()
-						.println(new JSONObject().put("exception", "expired or invalid JWT token " + e.getMessage()));
-			} catch (IOException | JSONException e1) {
-				e1.printStackTrace();
-			}
-			return;
+			e.printStackTrace();
+			throw new ClientErrorException(HttpStatus.FORBIDDEN, String.format("Expired or invalid token %s", e.getMessage()));
+		}finally {
+			SecurityContextHolder.clearContext();
 		}
 		filterChain.doFilter(request, response);
 	}

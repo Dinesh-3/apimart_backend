@@ -2,7 +2,6 @@ package com.codingmart.api_mart.controller;
 
 
 import com.codingmart.api_mart.service.DocsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,8 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/v1/docs")
 public class DocsController {
 
-    @Autowired
-    private DocsService docsService;
+    private final DocsService docsService;
+
+    public DocsController(DocsService docsService) {
+        this.docsService = docsService;
+    }
 
     @GetMapping("/open-api")
     public ResponseEntity<Resource> getOpenApiDocument(HttpServletRequest request) {

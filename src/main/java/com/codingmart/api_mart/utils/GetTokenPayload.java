@@ -13,7 +13,6 @@ public class GetTokenPayload {
         String payload = new String(decoder.decode(chunks[1]));
         JsonParser parser = JsonParserFactory.getJsonParser();
         Map<String, ?> tokenData = parser.parseMap(payload);
-        String value = tokenData.get(key).toString();
-        return value;
+        return tokenData.get(key).toString();
     }
 }

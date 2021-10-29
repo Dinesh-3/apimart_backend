@@ -6,11 +6,12 @@ public class ResponseBody {
     private String message = "Success";
     private Object data;
 
-    public ResponseBody() {
-    }
-
     public ResponseBody(Object data) {
         this.data = data;
+    }
+
+    public ResponseBody(String message) {
+        this.message = message;
     }
 
     public ResponseBody(String message, Object data) {

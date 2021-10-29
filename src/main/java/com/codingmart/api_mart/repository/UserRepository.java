@@ -68,7 +68,7 @@ public class UserRepository {
     }
 
     public User findById(String id) {
-        Bson filter = Filters.eq("user_id", id);
+        Bson filter = Filters.or(Filters.eq("user_id", id), Filters.eq("_id", id));
         Document user = collection.find(filter).first();
         if(user == null) throw new UserNotFoundException(HttpStatus.NOT_FOUND, String.format("User with id %s Not Found", id));
         return new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString(), user.getString("user_id"));

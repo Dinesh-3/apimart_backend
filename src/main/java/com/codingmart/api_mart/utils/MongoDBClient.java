@@ -3,9 +3,6 @@ package com.codingmart.api_mart.utils;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 
 import java.io.Serializable;
 
@@ -21,8 +18,7 @@ public class MongoDBClient implements Cloneable, Serializable {
         if(mongoDBClient != null) throw new Error("Instance creation not allowed");
     }
     public static MongoDatabase getDatabase(){
-        MongoDatabase database = mongoDBClient.getDatabase("myFirstDatabase");
-        return database;
+        return mongoDBClient.getDatabase("myFirstDatabase");
     }
 
     public static MongoClient getMongoClient() {

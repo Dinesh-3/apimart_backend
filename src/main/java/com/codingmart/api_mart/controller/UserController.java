@@ -4,43 +4,45 @@ import com.codingmart.api_mart.ExceptionHandler.ClientErrorException;
 import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.service.UserService;
 import com.codingmart.api_mart.utils.ResponseBody;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static com.codingmart.api_mart.utils.ControllerResponse.getResponseEntity;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @GetMapping("/test")
-    public ResponseBody test() {
-        return userService.test();
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/all")
-    public ResponseBody getAllUser(){
-        return userService.getAllUser();
+    public ResponseEntity<ResponseBody> getAll(){
+        List<User> users = userService.getAllUsers();
+        return getResponseEntity(users);
     }
 
     @GetMapping("/get")
-    public ResponseBody getUser(HttpServletRequest request){
-        return userService.getUserById(request);
+    public ResponseEntity<ResponseBody> getUser(HttpServletRequest request){
+        User user = userService.getUserById(request);
+        return getResponseEntity(user);
     }
 
     @PostMapping("/signup")
-    public ResponseBody createUser(@RequestBody User user){
+    public ResponseBody create(@RequestBody User user){
         return userService.signup(user);
     }
 
     @PostMapping("/login")
-    public ResponseBody loginUser(@RequestBody User user){
+    public ResponseBody login(@RequestBody User user){
         return userService.login(user);
     }
 
@@ -56,14 +58,4 @@ public class UserController {
         userService.sendVerifyEmail(id);
         return new ResponseEntity<>(new ResponseBody("Verification mail Sent"), HttpStatus.OK);
     }
-//
-//    @PutMapping("/{id}")
-//    public ResponseBody updateUser(@PathVariable long id, @RequestBody User user){
-//        return userService.updateUser(user);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseBody deleteUser(@PathVariable long id){
-//        return userService.deleteUser(id);
-//    }
 }

@@ -40,7 +40,7 @@ public class VerificationRepository {
         Bson filters = Filters.eq("user_id", id);
         FindIterable<Document> documents = collection.find(filters);
         Document user = documents.first();
-        if(user == null) throw new ResourceNotFoundException(String.format("Resource Not Found"));
+        if(user == null) throw new ResourceNotFoundException(String.format("User %s Not Found", id));
         user.remove("_id");
         try {
             Verification verification = mapper.readValue(user.toJson(), Verification.class);
