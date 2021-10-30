@@ -37,10 +37,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			e.printStackTrace();
 			throw new ClientErrorException(HttpStatus.FORBIDDEN, String.format("Expired or invalid token %s", e.getMessage()));
 		}finally {
-			SecurityContextHolder.clearContext();
+//			SecurityContextHolder.clearContext(); // Error Line
 		}
 		filterChain.doFilter(request, response);
-		System.out.println(" After filter = ");
 	}
 
 }

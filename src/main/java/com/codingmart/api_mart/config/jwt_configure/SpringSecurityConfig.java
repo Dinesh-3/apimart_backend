@@ -48,10 +48,5 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         .accessDeniedHandler((httpServletRequest, httpServletResponse, e) -> e.printStackTrace());
         http.apply(new JwtTokenConfigurer(tokenProvider));
     }
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler()
-    {
-        return new RestAuthenticationFailureHandler();
-    }
 
 }

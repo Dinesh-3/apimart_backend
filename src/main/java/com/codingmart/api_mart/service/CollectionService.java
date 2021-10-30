@@ -36,7 +36,7 @@ public class CollectionService {
     @Autowired
     private UserTableRepository userTableRepository;
 
-    public String upload(MultipartFile multipartFile, User user) {
+    public Table upload(MultipartFile multipartFile, User user) {
         String fullName = multipartFile.getOriginalFilename().replace(" ", "");
         FileName fileName = new FileName(fullName);
         String fileType = fileName.getType();
@@ -44,13 +44,13 @@ public class CollectionService {
         if(!supportedFileTypes.contains(fileType)) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, format("File Type: %s Not supported", fileType));
 
         String collectionName = getCollectionName(user.getName(), fileName);
-
+        System.out.println("collectionName = " + collectionName);
         File saveFile = saveFile(multipartFile, fullName);
         List<Map<String, Object>> records = getRecords(fileType, saveFile);
 
         collectionRepository.saveCollection(collectionName, records);
-        userTableRepository.save(new Table(user.getName(), fileName.getFullName(), collectionName));
-        return "Success";
+        Table table = userTableRepository.save(new Table(user.getName(), fileName.getFullName(), collectionName));
+        return table;
     }
 
     private String getCollectionName(String username, FileName fileName) {
@@ -66,17 +66,16 @@ public class CollectionService {
                 Reader reader = new FileReader(myFile.getAbsolutePath());
                 FileInputStream fileInputStream = new FileInputStream(myFile)
         ) {
-            List<Map<String, Object>> records = new ArrayList<>();
-            if(fileType.equals("csv")) records = parseFromCsv(reader);
-            if(fileType.equals("xlsx")) records = parseFromXlsx(new XSSFWorkbook(fileInputStream));
-            if(fileType.equals("xls")) records = parseFromXlsx(new HSSFWorkbook(fileInputStream));
-            return records;
+            if(fileType.equals("csv")) return parseFromCsv(reader);
+            if(fileType.equals("xlsx")) return parseFromXlsx(new XSSFWorkbook(fileInputStream));
+            if(fileType.equals("xls")) return parseFromXlsx(new HSSFWorkbook(fileInputStream));
         } catch (Exception e) {
             e.printStackTrace();
             throw new ClientErrorException(400, format("Error in %s file: %s" , fileType, e.getMessage()));
         }finally {
             deleteFile(myFile.getAbsolutePath());
         }
+        throw new ClientErrorException(400, String.format("Invalid File Type: %s", fileType));
     }
 
     private void deleteFile(String filePath) {
@@ -98,8 +97,10 @@ public class CollectionService {
 //            e.printStackTrace();
 //        }
         try {
-            String saveFilePath = "src/main/resources/uploads/" + fileName;
+            System.out.println("fileName = " + fileName);
+            String saveFilePath = Paths.get("").toAbsolutePath() + "/src/main/resources/uploads/" + fileName;
             File saveFile = new File(saveFilePath);
+            saveFile.createNewFile();
             multipartFile.transferTo(saveFile);
             return saveFile;
         } catch (IOException e) {

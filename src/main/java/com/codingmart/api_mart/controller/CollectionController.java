@@ -70,7 +70,7 @@ public class CollectionController {
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseBody> upload(@RequestParam("File") MultipartFile file, @ModelAttribute("user") User user) {
-        String message = service.upload(file, user);
+        Table message = service.upload(file, user);
         return getResponseEntity(message);
     }
 
