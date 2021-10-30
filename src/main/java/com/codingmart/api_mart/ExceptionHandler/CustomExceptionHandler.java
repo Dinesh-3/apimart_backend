@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-@ControllerAdvice
-public class CustomExceptionHandler {
+//@ControllerAdvice
+//public class CustomExceptionHandler {
 
 //    @ExceptionHandler(HttpClientErrorException.class)
 //    public ResponseEntity<ResponseBody> clientErrorException(HttpClientErrorException ex) {
@@ -29,4 +29,4 @@ public class CustomExceptionHandler {
 //        ResponseBody responseBody = new ResponseBody(false,500, ex.getMessage(), null);
 //        return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
-}
+//}
