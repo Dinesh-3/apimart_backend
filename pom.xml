@@ -58,6 +58,14 @@
 			<artifactId>mongo-java-driver</artifactId>
 			<version>3.12.9</version>
 		</dependency>
+		<dependency>
+			<groupId>com.dinesh.apimart</groupId>
+			<artifactId>commons</artifactId>
+			<scope>system</scope>
+			<version>1.0.0</version>
+			<systemPath>${project.basedir}/lib/commons-1.0.0.jar</systemPath>
+<!--			<systemPath>/home/dinesh/Downloads/Codingmart/commons/target/commons-1.0.0.jar</systemPath>-->
+		</dependency>
 		<!-- CSV TO JSON OR JSON TO CSV CONVERTER -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>

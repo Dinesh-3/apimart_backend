@@ -56,7 +56,6 @@ public class JwtTokenProvider implements Serializable {
 
 	public User getUser(String token) {
 		Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-		System.out.println("claims = " + claims);
 		return userRepository.findById((String) claims.get("id"));
 	}
 

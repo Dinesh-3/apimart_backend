@@ -4,11 +4,16 @@ import com.codingmart.api_mart.model.Table;
 import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.service.CollectionService;
 import com.codingmart.api_mart.utils.ResponseBody;
+import com.codingmart.api_mart.utils.ResponseResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +26,11 @@ import static com.codingmart.api_mart.utils.ControllerResponse.getResponseEntity
 public class CollectionController {
 
     private final CollectionService service;
+    private final ResponseResource resource;
 
-    public CollectionController(CollectionService service) {
+    public CollectionController(CollectionService service, ResponseResource resource) {
         this.service = service;
+        this.resource = resource;
     }
 
     @ModelAttribute("user")
@@ -46,7 +53,7 @@ public class CollectionController {
 
     @GetMapping("/get/{user}/{fileName}")
     public ResponseEntity<ResponseBody> collectionByUser(@PathVariable String user, @PathVariable String fileName, @RequestParam Map<String,String> queryParams ) {
-        List<HashMap<String, String>> collection = service.getCollectionByUser(user, fileName, queryParams);
+        List<Map<String, String>> collection = service.getCollectionByUser(user, fileName, queryParams);
         return getResponseEntity(collection);
     }
 
@@ -69,9 +76,15 @@ public class CollectionController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseBody> upload(@RequestParam("File") MultipartFile file, @ModelAttribute("user") User user) {
+    public ResponseEntity<ResponseBody> upload(@RequestParam("File") MultipartFile file, @ModelAttribute("user") User user) throws IOException {
         Table message = service.upload(file, user);
         return getResponseEntity(message);
+    }
+
+    @GetMapping("/download/{filename}")
+    public ResponseEntity<Resource> download(@PathVariable("filename") String fileName, @RequestParam(value = "type", defaultValue = "csv") String fileType,@ModelAttribute("user") User user ){
+        File file = service.createFile(fileName, fileType, user);
+        return resource.getResourceResponseEntity(file, file.getName().split("--")[1]);
     }
 
 }

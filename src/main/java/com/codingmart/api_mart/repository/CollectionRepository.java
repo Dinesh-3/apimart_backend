@@ -9,12 +9,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.stereotype.Repository;
 
-import javax.print.Doc;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -38,7 +36,7 @@ public class CollectionRepository {
         return true;
     }
 
-    public List<HashMap<String, String>> getRecordsByCollection(String collectionName, Map<String,String> queryParams) throws IOException {
+    public List<Map<String, String>> getRecordsByCollection(String collectionName, Map<String,String> queryParams) throws IOException {
 
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
 
@@ -66,7 +64,7 @@ public class CollectionRepository {
             documents = collection.find(filter);
         }
 
-        List<HashMap<String, String>> records = new ArrayList<>();
+        List<Map<String, String>> records = new ArrayList<>();
         for (Document item:documents) {
             Type type = new TypeToken<HashMap<String, String>>(){}.getType();
             String id = item.getObjectId("_id").toString();
