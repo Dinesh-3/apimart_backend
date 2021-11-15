@@ -27,3 +27,6 @@ server:
   port: 5000
 file:
   upload-dir: src/main/resources/uploads/
+
+collection:
+  reserved: user,verification,table

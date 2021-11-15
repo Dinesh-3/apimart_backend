@@ -37,9 +37,9 @@ public class ApiMartApplication implements CommandLineRunner {
 	MailService getMailService() {
 		return new MailService();
 	}
-
 	@Configuration
 	public class WebConfiguration implements WebMvcConfigurer {
+
 		@Override
 		public void addCorsMappings(CorsRegistry registry) {
 			registry.addMapping("/**").allowedMethods("*");

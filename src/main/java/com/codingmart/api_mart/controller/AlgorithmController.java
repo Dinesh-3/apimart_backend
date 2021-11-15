@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AlgorithmController {
     private final AlgorithmService service;
 
-     public AlgorithmController(AlgorithmService service) {
+    public AlgorithmController(AlgorithmService service) {
         this.service = service;
     }
 

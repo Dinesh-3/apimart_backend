@@ -10,6 +10,7 @@ import com.codingmart.api_mart.repository.UserTableRepository;
 import com.codingmart.api_mart.utils.FileName;
 import com.dinesh.apimart.filereader.FileParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,8 @@ public class CollectionService {
     @Autowired
     private UserTableRepository userTableRepository;
 
+    @Value("${collection.reserved}")
+    private Set<String> reservedCollection;
 
     public Table upload(MultipartFile multipartFile, User user) {
         String fullName = multipartFile.getOriginalFilename().replace(" ", "");
@@ -39,6 +42,7 @@ public class CollectionService {
         if(!FileParser.supports(fileType)) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, format("File Type: %s Not supported", fileType));
 
         String collectionName = getCollectionName(user.getName(), fileName.getName());
+        validateTableExit(user.getName(), collectionName);
         File saveFile = saveFile(multipartFile, fullName);
 
         try {
@@ -50,14 +54,6 @@ public class CollectionService {
         }catch (Exception e) {
             throw new StatusCodeException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
         }
-    }
-
-    private String getCollectionName(String username, String fileName) {
-        String collectionName = username + fileName;
-        handleReservedCollection(collectionName);
-        boolean isTableExist = userTableRepository.isExist(username, collectionName);
-        if(isTableExist) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, "Table already exist. Change file name");
-        return collectionName;
     }
 
     private File saveFile(MultipartFile multipartFile, String fileName) {
@@ -86,8 +82,7 @@ public class CollectionService {
     }
 
     public List<Map<String, String>> getCollectionByUser(String user, String fileName, Map<String,String> queryParams) {
-        String collectionName = (user.toLowerCase() + fileName);
-        handleReservedCollection(collectionName);
+        String collectionName = getCollectionName(user.toLowerCase() , fileName);
         List<Map<String, String>> records;
         try {
             records = collectionRepository.getRecordsByCollection(collectionName, queryParams);
@@ -99,31 +94,23 @@ public class CollectionService {
         return records;
     }
 
-    private void handleReservedCollection(String collectionName) {
-        if(SystemConfig.getReservedCollections().contains(collectionName)) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, "File Name Not available change file name to continue");
-    }
-
     public Map<String, String> insertRecord(String user, String fileName, Map<String, String> requestBody) {
-        String collectionName = (user.toLowerCase() + fileName);
-        handleReservedCollection(collectionName);
+        String collectionName = getCollectionName(user.toLowerCase() , fileName);
         return collectionRepository.insertRecord(collectionName, requestBody);
     }
 
     public Map<String, String> updateRecord(String user, String fileName, Map<String, String> queryParams, Map<String, String> requestBody) {
-        String collectionName = (user.toLowerCase() + fileName);
-        handleReservedCollection(collectionName);
+        String collectionName = getCollectionName(user.toLowerCase() , fileName);
         return collectionRepository.updateRecord(collectionName, queryParams, requestBody);
     }
 
     public boolean deleteRecord(String user, String fileName, Map<String, String> queryParams) {
-        String collectionName = (user.toLowerCase() + fileName);
-        handleReservedCollection(collectionName);
+        String collectionName = getCollectionName(user.toLowerCase() , fileName);
         return collectionRepository.deleteRecord(collectionName, queryParams);
     }
 
     public String deleteCollectionByUser(String fileName, String username) {
         userTableRepository.deleteTableByUser(username.toLowerCase(), fileName);
-
         return "Collection Deleted Successfully";
     }
 
@@ -131,5 +118,16 @@ public class CollectionService {
         List<Map<String, String>> records = getCollectionByUser(user.getName(), fileName, new HashMap<>());
         File file = FileParser.parseFile(records, String.format("%s--%s.%s", user.getName(), fileName, type));
         return file;
+    }
+
+    private String getCollectionName(String username, String fileName) {
+        String collectionName = username.toLowerCase() + fileName.toLowerCase();
+        if(reservedCollection.contains(collectionName)) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, "File Name Not available change file name to continue");
+        return collectionName;
+    }
+
+    private void validateTableExit(String userName, String collection){
+        boolean isTableExist = userTableRepository.isExist(userName, collection);
+        if(isTableExist) throw new ClientErrorException(HttpStatus.NOT_ACCEPTABLE, "Table already exist. Change file name");
     }
 }

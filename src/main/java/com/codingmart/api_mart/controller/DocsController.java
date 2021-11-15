@@ -31,5 +31,4 @@ public class DocsController {
     public ResponseEntity<Resource> getPostmanCollection() {
         return docsService.getPostmanCollection();
     }
-
 }
