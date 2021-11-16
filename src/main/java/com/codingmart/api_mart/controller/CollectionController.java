@@ -5,7 +5,6 @@ import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.service.CollectionService;
 import com.codingmart.api_mart.utils.ResponseBody;
 import com.codingmart.api_mart.utils.ResponseResource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

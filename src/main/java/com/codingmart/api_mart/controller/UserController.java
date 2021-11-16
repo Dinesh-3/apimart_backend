@@ -4,6 +4,7 @@ import com.codingmart.api_mart.ExceptionHandler.ClientErrorException;
 import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.service.UserService;
 import com.codingmart.api_mart.utils.ResponseBody;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ import static com.codingmart.api_mart.utils.ControllerResponse.getResponseEntity
 public class UserController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(@Qualifier("userServiceImpl") UserService userService) { // Default is className in camel case
         this.userService = userService;
     }
 
