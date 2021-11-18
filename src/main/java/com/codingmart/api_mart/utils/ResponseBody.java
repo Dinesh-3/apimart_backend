@@ -1,5 +1,8 @@
 package com.codingmart.api_mart.utils;
 
+import lombok.Data;
+
+@Data
 public class ResponseBody {
     private boolean status = true;
     private int status_code = 200;
@@ -30,21 +33,5 @@ public class ResponseBody {
         this.status_code = status_code;
         this.message = message;
         this.data = data;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public int getStatus_code() {
-        return status_code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Object getData() {
-        return data;
     }
 }

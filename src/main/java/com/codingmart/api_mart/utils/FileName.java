@@ -1,9 +1,9 @@
 package com.codingmart.api_mart.utils;
 
 public class FileName {
-    private String name;
-    private String type;
-    private String fullName;
+    private final String name;
+    private final String type;
+    private final String fullName;
 
     public FileName(String fullName) {
         String[] splitName = fullName.split("[.]");
@@ -18,10 +18,6 @@ public class FileName {
 
     public String getType() {
         return type;
-    }
-
-    public String getFullName() {
-        return fullName;
     }
 
     @Override

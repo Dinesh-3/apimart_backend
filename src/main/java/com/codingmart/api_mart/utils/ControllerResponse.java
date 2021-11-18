@@ -1,6 +1,5 @@
 package com.codingmart.api_mart.utils;
 
-import com.codingmart.api_mart.utils.ResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  apimart:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb+srv://root:aZUnLWfdUMcB3my2@cluster0.obetp.mongodb.net/myFirstDatabase?retryWrites\=true&w\=majority;
+      - JWT_SECRET=apiMart12345;
+      - MAIL_PASSWORD=Ott Alert

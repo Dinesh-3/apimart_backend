@@ -1,0 +1,3 @@
+mvn spring-boot:build-image
+
+SERVER: Tomcat, Jetty, Undertow, Reactor, Netty

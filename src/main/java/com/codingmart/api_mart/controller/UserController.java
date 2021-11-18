@@ -4,7 +4,11 @@ import com.codingmart.api_mart.ExceptionHandler.ClientErrorException;
 import com.codingmart.api_mart.model.User;
 import com.codingmart.api_mart.service.UserService;
 import com.codingmart.api_mart.utils.ResponseBody;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.availability.AvailabilityChangeEvent;
+import org.springframework.boot.availability.LivenessState;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +24,8 @@ import static com.codingmart.api_mart.utils.ControllerResponse.getResponseEntity
 @RequestMapping("/api/v1/user")
 public class UserController {
     private final UserService userService;
+    @Autowired
+    ApplicationEventPublisher publisher;
 
     public UserController(@Qualifier("userServiceImpl") UserService userService) { // Default is className in camel case
         this.userService = userService;
@@ -28,6 +34,7 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<ResponseBody> getAll(){
         List<User> users = userService.getAllUsers();
+        AvailabilityChangeEvent.publish(publisher, this, LivenessState.BROKEN);
         return getResponseEntity(users);
     }
 

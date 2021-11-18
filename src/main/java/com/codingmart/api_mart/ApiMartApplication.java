@@ -13,8 +13,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.io.IOException;
-
 @SpringBootApplication
 public class ApiMartApplication implements CommandLineRunner {
 

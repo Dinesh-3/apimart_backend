@@ -20,11 +20,13 @@ spring:
     username: ottalert.noreply@gmail.com
     password: ${MAIL_PASSWORD}
     port: 587
-
+  lifecycle:
+    timeout-per-shutdown-phase: 300 # 5 mins timeout for long shutdown operation
 jwt:
   secret-key: ${JWT_SECRET}
 server:
   port: 5000
+  shutdown: graceful # it will shutdown once request processed completely
 file:
   upload-dir: src/main/resources/uploads/
 

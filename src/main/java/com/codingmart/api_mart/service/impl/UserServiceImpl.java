@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(savedUser.getName(), user.getPassword()));
         Verification verify = verificationRepository.findById(savedUser.getUser_id());
-        if(!verify.isIs_email_verified()) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Email Not Verified. Verify email to continue");
+        if(!verify.is_email_verified()) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Email Not Verified. Verify email to continue");
         HashMap<String, Object> body = new HashMap<>();
         body.put("token", tokenProvider.createToken(savedUser.getName(), savedUser.getEmail(), savedUser.getUser_id()));
         body.put("user", savedUser);
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean verifyEmail(String otp, String id) {
         Verification verification = verificationRepository.findById(id);
-        if(verification.isIs_email_verified()) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Email already verified");
+        if(verification.is_email_verified()) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Email already verified");
         if(!verification.getOtp().equals(otp)) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Invalid OTP. Try again");
         if(!OtpUtil.isValid(LocalDateTime.parse(verification.getOtp_created_at()))) {
             try {
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
             }
             throw new ClientErrorException(HttpStatus.BAD_REQUEST, "Expired Link. New Verify link sent to mail");
         }
-        verification.setIs_email_verified(true);
+        verification.is_email_verified();
         verificationRepository.findOneAndUpdate(id, verification);
         return true;
     }
@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
     public void sendVerifyEmail(String id) {
         Verification verification = verificationRepository.findById(id);
         User user = userRepository.findById(id);
-        if(verification.isIs_email_verified()) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Email already verified");
+        if(verification.is_email_verified()) throw new ClientErrorException(HttpStatus.FORBIDDEN, "Email already verified");
         String otp = OtpUtil.getOtp();
         verification.setOtp(otp);
         verification.setOtp_created_at(LocalDateTime.now().toString());

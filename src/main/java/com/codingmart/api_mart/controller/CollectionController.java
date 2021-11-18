@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -74,7 +73,7 @@ public class CollectionController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseBody> upload(@RequestParam("File") MultipartFile file, @ModelAttribute("user") User user) throws IOException {
+    public ResponseEntity<ResponseBody> upload(@RequestParam("File") MultipartFile file, @ModelAttribute("user") User user) {
         Table message = service.upload(file, user);
         return getResponseEntity(message);
     }
