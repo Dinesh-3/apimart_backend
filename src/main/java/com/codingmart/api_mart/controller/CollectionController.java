@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +80,9 @@ public class CollectionController {
     }
 
     @GetMapping("/download/{filename}")
-    public ResponseEntity<Resource> download(@PathVariable("filename") String fileName, @RequestParam(value = "type", defaultValue = "csv") String fileType,@ModelAttribute("user") User user ){
+    public void download(@PathVariable("filename") String fileName, @RequestParam(value = "type", defaultValue = "csv") String fileType, @ModelAttribute("user") User user, HttpServletResponse response){
         File file = service.createFile(fileName, fileType, user);
-        return resource.getResourceResponseEntity(file, file.getName().split("--")[1]);
+        resource.writeStream(file, response);
     }
 
 }

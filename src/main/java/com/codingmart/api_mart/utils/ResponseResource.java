@@ -1,5 +1,6 @@
 package com.codingmart.api_mart.utils;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -7,9 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 
 @Component
 public class ResponseResource {
@@ -21,7 +21,7 @@ public class ResponseResource {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }finally {
-            file.delete();
+//            file.delete();
         }
         HttpHeaders header = new HttpHeaders();
         header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
@@ -34,5 +34,20 @@ public class ResponseResource {
                 .contentLength(file.length())
                 .contentType(MediaType.MULTIPART_RELATED)
                 .body(resource);
+    }
+
+    public void writeStream(File file, HttpServletResponse response) {
+        response.setHeader("Content-disposition", "attachment; filename=" + file.getName());
+
+        try(
+            OutputStream out = response.getOutputStream();
+            FileInputStream in = new FileInputStream(file);
+        ) {
+            IOUtils.copy(in,out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            file.delete();
+        }
     }
 }

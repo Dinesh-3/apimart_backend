@@ -11,7 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 @ControllerAdvice
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(HttpClientErrorException.class)
+    @ExceptionHandler({HttpClientErrorException.class, ClientErrorException.class})
     public ResponseEntity<ResponseBody> clientErrorException(HttpClientErrorException ex) {
         ResponseBody responseBody = new ResponseBody(false,ex.getStatusCode().value(), ex.getResponseBodyAsString());
         return new ResponseEntity<>(responseBody, ex.getStatusCode());
