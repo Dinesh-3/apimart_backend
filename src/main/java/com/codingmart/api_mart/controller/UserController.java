@@ -23,47 +23,53 @@ import static com.codingmart.api_mart.utils.ControllerResponse.getResponseEntity
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
-    private final UserService userService;
+    private final UserService service;
     @Autowired
     ApplicationEventPublisher publisher;
 
     public UserController(@Qualifier("userServiceImpl") UserService userService) { // Default is className in camel case
-        this.userService = userService;
+        this.service = userService;
     }
 
     @GetMapping("/all")
     public ResponseEntity<ResponseBody> getAll(){
-        List<User> users = userService.getAllUsers();
+        List<User> users = service.getAllUsers();
         AvailabilityChangeEvent.publish(publisher, this, LivenessState.BROKEN);
         return getResponseEntity(users);
     }
 
     @GetMapping("/get")
     public ResponseEntity<ResponseBody> getUser(HttpServletRequest request){
-        User user = userService.getUserById(request);
+        User user = service.getUserById(request);
         return getResponseEntity(user);
     }
 
     @PostMapping("/signup")
     public ResponseBody create(@RequestBody User user){
-        return userService.signup(user);
+        return service.signup(user);
     }
 
     @PostMapping("/login")
     public ResponseBody login(@RequestBody User user){
-        return userService.login(user);
+        return service.login(user);
     }
 
     @GetMapping(value = "/verify/email", params = {"otp", "id"})
     public RedirectView verifyEmail(@RequestParam("otp") String otp, @RequestParam("id") String id){
-        boolean status = userService.verifyEmail(otp, id);
+        boolean status = service.verifyEmail(otp, id);
         if(status) return new RedirectView("http://localhost:3000/login");
         throw new ClientErrorException(HttpStatus.FORBIDDEN, "Invalid Link Try Again");
     }
 
     @GetMapping("/verify/send_mail/{id}")
     public ResponseEntity<ResponseBody> sendVerifyMail(@PathVariable String id){
-        userService.sendVerifyEmail(id);
+        service.sendVerifyEmail(id);
         return new ResponseEntity<>(new ResponseBody("Verification mail Sent"), HttpStatus.OK);
+    }
+
+    @PostMapping("/password")
+    ResponseEntity<ResponseBody> updatePassword(@RequestBody User user) {
+        service.updatePassword(user);
+        return ResponseEntity.ok(new ResponseBody());
     }
 }

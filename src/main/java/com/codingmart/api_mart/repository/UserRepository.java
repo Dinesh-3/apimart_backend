@@ -10,6 +10,7 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -46,18 +47,24 @@ public class UserRepository {
     }
 
     public boolean save(User user) {
-        Document userDocument = new Document();
-        userDocument.append("name", user.getName());
-        userDocument.append("email", user.getEmail());
-        userDocument.append("password", user.getPassword());
-        userDocument.append("created_at", user.getCreated_at());
-        userDocument.append("user_id", user.getUser_id());
+        Document userDocument = getDocument(user);
         try {
             collection.insertOne(userDocument);
             return true;
         }catch (Exception error) {
             return false;
         }
+    }
+
+    private Document getDocument(User user) {
+        Document userDocument = new Document();
+//        userDocument.append("_id", user.getId());
+        userDocument.append("name", user.getName());
+        userDocument.append("email", user.getEmail());
+        userDocument.append("password", user.getPassword());
+        userDocument.append("created_at", user.getCreated_at());
+        userDocument.append("user_id", user.getUser_id());
+        return userDocument;
     }
 
     public boolean isEmailOrNameExists(String name, String email) {
@@ -72,5 +79,17 @@ public class UserRepository {
         Document user = collection.find(filter).first();
         if(user == null) throw new UserNotFoundException(HttpStatus.NOT_FOUND, String.format("User with id %s Not Found", id));
         return new User(user.get("_id").toString(), user.getString("name"), user.getString("email"), user.getString("password"), user.get("created_at").toString(), user.getString("user_id"));
+    }
+
+    public void findOneAndUpdate(User user) {
+        System.out.println("user = " + user);
+
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        Bson user_id = Filters.eq("user_id", user.getUser_id());
+        System.out.println("user = " + user);
+        Document document = getDocument(user);
+        Document query = new Document().append("user_id", user.getUser_id());
+        System.out.println("document = " + document);
+        collection.replaceOne(query, document);
     }
 }

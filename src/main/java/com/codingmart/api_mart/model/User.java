@@ -16,7 +16,7 @@ public class User {
     private String name;
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JsonIgnore
+//    @JsonIgnore
     private String password;
     private String created_at = LocalDateTime.now().toString();
 

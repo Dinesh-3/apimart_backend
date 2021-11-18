@@ -18,4 +18,6 @@ public interface UserService {
     boolean verifyEmail(String otp, String id);
 
     void sendVerifyEmail(String id);
+
+    void updatePassword(User user);
 }

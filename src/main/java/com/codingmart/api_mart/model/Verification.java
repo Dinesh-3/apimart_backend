@@ -1,5 +1,6 @@
 package com.codingmart.api_mart.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Verification {
     private String id;
     private String user_id;
@@ -24,5 +26,9 @@ public class Verification {
         this.user_id = user_id;
         this.otp_created_at = otp_created_at;
         this.otp = otp;
+    }
+
+    public void setIs_email_verified(boolean is_email_verified) {
+        this.is_email_verified = is_email_verified;
     }
 }

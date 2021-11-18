@@ -43,8 +43,7 @@ public class VerificationRepository {
         if(user == null) throw new ResourceNotFoundException(String.format("User %s Not Found", id));
         user.remove("_id");
         try {
-            Verification verification = mapper.readValue(user.toJson(), Verification.class);
-            return verification;
+            return mapper.readValue(user.toJson(), Verification.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

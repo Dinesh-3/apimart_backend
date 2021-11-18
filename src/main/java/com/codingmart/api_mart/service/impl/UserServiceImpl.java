@@ -131,4 +131,9 @@ public class UserServiceImpl implements UserService {
         verificationRepository.findOneAndUpdate(verification.getUser_id(), verification);
         mailService.sendForVerify(user, verification);
     }
+
+    @Override
+    public void updatePassword(User user) {
+        userRepository.findOneAndUpdate(user);
+    }
 }

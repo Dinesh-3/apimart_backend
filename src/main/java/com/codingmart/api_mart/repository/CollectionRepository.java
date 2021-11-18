@@ -103,7 +103,6 @@ public class CollectionRepository {
         }
         UpdateOptions options = new UpdateOptions().upsert(false);
         collection.replaceOne(filter, document, options);
-
         return requestBody;
     }
 
