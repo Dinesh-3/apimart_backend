@@ -1,0 +1,133 @@
+package filereader;
+
+import filereader.exception.FileParseException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.*;
+import java.util.*;
+import java.util.function.Function;
+
+@Deprecated
+public class FileParserOld {
+    private Map<String, Function<File, List<Map<String, Object>>>> mapper = new HashMap<>();
+
+    public FileParserOld() {
+        mapper.put("csv", parseFromCsv() );
+        mapper.put("xls", parseXls());
+        mapper.put("xlsx", parseXlsx());
+    }
+
+    public List<Map<String, Object>> getRecords(File myFile) {
+        String type = myFile.getName().split("[.]")[1];
+        return mapper.get(type).apply(myFile);
+    }
+
+    private Function<File, List<Map<String, Object>>> parseFromCsv() {
+        return (File file) -> {
+            Reader reader = null;
+            Iterable<CSVRecord> records = null;
+            try {
+                reader = new java.io.FileReader(file.getAbsolutePath());
+                records = CSVFormat.DEFAULT.parse(reader);
+            } catch (IOException e) {
+                throw new FileParseException(e.getMessage(), e.getCause());
+            }
+
+            Iterator<String> csvHeader = records.iterator().next().iterator();
+            List<String> headers = new ArrayList<>();
+            while (csvHeader.hasNext()) {
+                String value = csvHeader.next();
+                headers.add(value);
+            }
+
+            List<Map<String, Object>> listOfRecords = new ArrayList<>();
+
+            for (CSVRecord record : records) {
+                Iterator<String> recordIterable = record.iterator();
+                Map<String, Object> rowMap = new HashMap<>();
+                int index = 0;
+                while (recordIterable.hasNext()) {
+                    String value = recordIterable.next();
+                    rowMap.put(headers.get(index), value);
+                    ++ index;
+                }
+                listOfRecords.add(rowMap);
+            }
+            file.delete();
+            return listOfRecords;
+        };
+
+    }
+
+    private Function<File, List<Map<String, Object>>> parseXls(){
+        return (File file) -> {
+            try {
+                return parseFromXlsx(new HSSFWorkbook(new FileInputStream(file)));
+            } catch (IOException e) {
+                throw new FileParseException(e.getMessage(), e.getCause());
+            }finally {
+                file.delete();
+            }
+        };
+    }
+    private Function<File, List<Map<String, Object>>> parseXlsx() {
+        return (File file) -> {
+            try {
+                return parseFromXlsx(new XSSFWorkbook(new FileInputStream(file)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }finally {
+                file.delete();
+            }
+            return null;
+        };
+    }
+    private List<Map<String, Object>> parseFromXlsx(Workbook workbook) throws IOException {
+            Sheet sheet = workbook.getSheetAt(0);
+            int lastRowNum = sheet.getLastRowNum();
+            Row header = sheet.getRow(0);
+            List<Map<String, Object>> records = new ArrayList<>();
+
+            for (int rowIndex = 1; rowIndex <= lastRowNum; rowIndex++) {
+                Row currentRow = sheet.getRow(rowIndex);
+                Iterator<Cell> cellIterator = currentRow.cellIterator();
+                Map<String, Object> rowMap = new HashMap<>();
+                while (cellIterator.hasNext()){
+                    Cell cell = cellIterator.next();
+                    int cellIndex = cell.getColumnIndex();
+
+                    String key = getCellValue(header.getCell(cellIndex)).toString();
+                    Object value = getCellValue(cell);
+
+                    rowMap.put(key,value);
+                }
+                records.add(rowMap);
+            }
+            workbook.close();
+            return records;
+    }
+
+    private Object getCellValue(Cell cell) {
+        switch (cell.getCellType()) {
+            case BOOLEAN:
+                return cell.getBooleanCellValue();
+            case STRING:
+                return cell.getRichStringCellValue().getString();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue();
+                } else {
+                    return cell.getNumericCellValue();
+                }
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return "";
+        }
+    }
+
+}
