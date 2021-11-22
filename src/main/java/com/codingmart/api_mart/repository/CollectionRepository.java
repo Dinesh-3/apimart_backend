@@ -11,6 +11,7 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -20,7 +21,8 @@ import java.util.*;
 @Repository
 public class CollectionRepository {
     private final MongoDatabase mongoDBClient = MongoDBClient.getDatabase();
-
+    @Autowired
+    private Gson gson;
     public boolean saveCollection(String collectionName, List<Map<String, Object>> records) {
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
         List<Document> documents = new ArrayList<>();
@@ -54,7 +56,7 @@ public class CollectionRepository {
         queryParams.remove("query_limit");
         queryParams.remove("query_page");
 
-        Bson filter = Document.parse(new Gson().toJson(queryParams));
+        Bson filter = Document.parse(gson.toJson(queryParams));
         FindIterable<Document> documents;
         if(pageQuery.containsKey("limit") && pageQuery.containsKey("page")) {
             int limit = pageQuery.get("limit");
@@ -69,7 +71,7 @@ public class CollectionRepository {
             Type type = new TypeToken<HashMap<String, String>>(){}.getType();
             String id = item.getObjectId("_id").toString();
             item.remove("_id");
-            HashMap<String,String> map = new Gson().fromJson(item.toJson(), type);
+            HashMap<String,String> map = gson.fromJson(item.toJson(), type);
             map.put("_id", id);
             records.add(map);
         }
@@ -95,7 +97,7 @@ public class CollectionRepository {
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
         if(collection.countDocuments() < 0) return null;
 
-        Bson filter = Document.parse(new Gson().toJson(queryParams));
+        Bson filter = Document.parse(gson.toJson(queryParams));
 
         Document document = new Document();
         for (String key : requestBody.keySet()) {
@@ -111,7 +113,7 @@ public class CollectionRepository {
         MongoCollection<Document> collection = mongoDBClient.getCollection(collectionName);
         if(collection.countDocuments() < 0) return false;
 
-        Bson filter = Document.parse(new Gson().toJson(queryParams));
+        Bson filter = Document.parse(gson.toJson(queryParams));
 
         DeleteResult updatedDocument = collection.deleteOne(filter);
 

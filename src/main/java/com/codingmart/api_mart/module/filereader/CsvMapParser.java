@@ -41,12 +41,10 @@ public class CsvMapParser implements FileMapParser {
     }
 
     @Override
-    public File parseFile(List<Map<String, String>> records, String fileName) {
-        File file = new File(Paths.get("").toAbsolutePath() + "/src/main/resources/downloads/" + fileName);
+    public File parseFile(List<Map<String, String>> records, File file) {
         try(
                 FileWriter write = new FileWriter(file);
         ) {
-            file.createNewFile();
 
             String header = records.get(0).keySet().stream().collect(Collectors.joining(",","","\n"));
             write.write(header);

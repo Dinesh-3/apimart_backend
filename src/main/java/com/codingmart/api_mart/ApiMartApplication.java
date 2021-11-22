@@ -2,6 +2,7 @@ package com.codingmart.api_mart;
 
 import com.codingmart.api_mart.service.MailService;
 import com.codingmart.api_mart.utils.MongoDBClient;
+import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -42,6 +43,11 @@ public class ApiMartApplication implements CommandLineRunner {
 		public void addCorsMappings(CorsRegistry registry) {
 			registry.addMapping("/**").allowedMethods("*");
 		}
+	}
+
+	@Bean
+	Gson gson() {
+		return new Gson();
 	}
 }
 
